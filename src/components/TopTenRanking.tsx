@@ -32,11 +32,11 @@ export default function TopTenRanking() {
             Haftalik Top 10
           </h2>
           <div className="flex items-center gap-1.5 text-[10px] text-gray-500 font-bold uppercase tracking-widest">
-            <Timer className="w-3 h-3 text-purple-500" />
-            Yangilanishga: <span className="text-purple-400">{timeLeft}</span>
+            <Timer className="w-3 h-3 text-blue-500" />
+            Yangilanishga: <span className="text-blue-400">{timeLeft}</span>
           </div>
         </div>
-        <div className="flex items-center gap-1 text-[10px] font-black text-rose-500 bg-rose-500/10 px-2 py-1 rounded-full animate-pulse">
+        <div className="flex items-center gap-1 text-[10px] font-black text-blue-500 bg-blue-500/10 px-2 py-1 rounded-full animate-pulse">
            <Flame className="w-3 h-3" /> HOT
         </div>
       </div>
@@ -50,7 +50,7 @@ export default function TopTenRanking() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: idx * 0.05 }}
               onClick={() => navigate(`/watch/${anime.id}`)}
-              className="relative flex items-center gap-4 group/item cursor-pointer p-3 rounded-[20px] bg-white/[0.02] border border-white/[0.03] hover:bg-white/[0.08] hover:border-purple-500/30 transition-all duration-300"
+              className="relative flex items-center gap-4 group/item cursor-pointer p-3 rounded-[20px] bg-white/[0.02] border border-white/[0.03] hover:bg-white/[0.08] hover:border-blue-500/30 transition-all duration-300"
             >
               {/* Rank Badge */}
               <div className={`w-10 h-10 flex-shrink-0 flex items-center justify-center font-black text-xl rounded-2xl ${
@@ -75,7 +75,7 @@ export default function TopTenRanking() {
 
               {/* Info */}
               <div className="min-w-0 flex-1">
-                <div className="text-sm font-black text-gray-200 truncate group-hover/item:text-purple-400 transition-colors">
+                <div className="text-sm font-black text-gray-200 truncate group-hover/item:text-blue-400 transition-colors">
                   {anime.title}
                 </div>
                 <div className="flex items-center gap-3 mt-1">
@@ -89,7 +89,7 @@ export default function TopTenRanking() {
               </div>
 
               <div className="opacity-0 group-hover/item:opacity-100 transition-all -translate-x-2 group-hover/item:translate-x-0 pr-1">
-                <ChevronRight className="w-4 h-4 text-purple-500" />
+                <ChevronRight className="w-4 h-4 text-blue-500" />
               </div>
               
               {/* Highlight Background on Top 3 */}
@@ -107,7 +107,7 @@ export default function TopTenRanking() {
 
       <button 
         onClick={() => navigate('/ranking')}
-        className="w-full mt-6 py-4 rounded-2xl bg-white/5 border border-white/5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 hover:text-white hover:bg-purple-600/20 hover:border-purple-500/20 transition-all duration-300 shadow-xl shadow-black/20"
+        className="w-full mt-6 py-4 rounded-2xl bg-white/5 border border-white/5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 hover:text-white hover:bg-blue-600/20 hover:border-blue-500/20 transition-all duration-300 shadow-xl shadow-black/20"
       >
         To'liq Reytingni Ko'rish
       </button>

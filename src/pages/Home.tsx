@@ -70,20 +70,20 @@ export default function Home() {
                     <h2 className="text-2xl font-black flex items-center gap-2">
                        {searchQuery ? (
                          <>
-                           <SearchIcon className="text-purple-500" />
+                           <SearchIcon className="text-blue-500" />
                            "{searchQuery}" qidiruv natijalari
                          </>
                        ) : filterQuery === 'Mashhur' ? (
                          <>
-                           <span className="text-purple-500">Mashhur</span> animelar
+                           <span className="text-blue-500">Mashhur</span> animelar
                          </>
                        ) : statusQuery ? (
                          <>
-                           <span className="text-purple-500">{statusQuery}</span> animelar ro'yxati
+                           <span className="text-blue-500">{statusQuery}</span> animelar ro'yxati
                          </>
                        ) : (
                          <>
-                           <span className="text-purple-500">#{genreQuery}</span> janridagi animelar
+                           <span className="text-blue-500">#{genreQuery}</span> janridagi animelar
                          </>
                        )}
                     </h2>
@@ -112,7 +112,7 @@ export default function Home() {
                         <button 
                           disabled={currentPage === 1}
                           onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                          className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-purple-600 hover:text-white disabled:opacity-30 disabled:hover:bg-white/5 disabled:hover:text-gray-400 transition-all"
+                          className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white disabled:opacity-30 disabled:hover:bg-white/5 disabled:hover:text-gray-400 transition-all"
                         >
                           <ChevronLeft className="w-5 h-5" />
                         </button>
@@ -123,7 +123,7 @@ export default function Home() {
                             onClick={() => setCurrentPage(i + 1)}
                             className={`w-12 h-10 rounded-xl font-black transition-all ${
                               currentPage === i + 1 
-                                ? 'bg-lime-500 text-black shadow-lg shadow-lime-500/20' 
+                                ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
                                 : 'bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10 hover:text-white'
                             }`}
                           >
@@ -134,7 +134,7 @@ export default function Home() {
                         <button 
                           disabled={currentPage === totalPages}
                           onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                          className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-purple-600 hover:text-white disabled:opacity-30 disabled:hover:bg-white/5 disabled:hover:text-gray-400 transition-all"
+                          className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white disabled:opacity-30 disabled:hover:bg-white/5 disabled:hover:text-gray-400 transition-all"
                         >
                           <ChevronRight className="w-5 h-5" />
                         </button>

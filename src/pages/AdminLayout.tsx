@@ -41,7 +41,7 @@ export default function AdminLayout() {
   const isActive = (path: string) => location.pathname === path || location.pathname === path + '/';
 
   return (
-    <div className="min-h-screen bg-[#070708] text-white font-sans selection:bg-purple-500/30">
+    <div className="min-h-screen bg-[#070708] text-white font-sans selection:bg-blue-500/30">
       {/* Sidebar */}
       <aside 
         className={`fixed inset-y-0 left-0 z-50 bg-[#0a0a0c] border-r border-white/5 transition-all duration-500 ease-in-out ${isSidebarOpen ? 'w-72' : 'w-20'}`}
@@ -50,11 +50,11 @@ export default function AdminLayout() {
           {/* Logo Area */}
           <div className="h-20 flex items-center px-6 border-b border-white/5 overflow-hidden">
             <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-gradient-to-tr from-purple-600 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-900/20 group-hover:rotate-12 transition-transform duration-500">
+              <div className="w-10 h-10 bg-gradient-to-tr from-blue-600 to-blue-400 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/20 group-hover:rotate-12 transition-transform duration-500">
                 <Zap className="w-6 h-6 text-white fill-white" />
               </div>
               <span className={`text-xl font-black tracking-tighter transition-all duration-500 ${isSidebarOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
-                ANI<span className="text-purple-500">HUB</span>
+                ANI<span className="text-blue-500">HUB</span>
                 <span className="text-[10px] ml-1 text-gray-500 font-bold border border-white/10 px-1 rounded uppercase">Pro</span>
               </span>
             </Link>
@@ -70,11 +70,11 @@ export default function AdminLayout() {
                   to={item.path}
                   className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all relative group h-14 ${
                     active 
-                      ? 'bg-purple-600/10 text-white shadow-[0_0_20px_rgba(124,58,237,0.1)]' 
+                      ? 'bg-blue-600/10 text-white shadow-[0_0_20px_rgba(37,99,235,0.1)]' 
                       : 'text-gray-500 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  <item.icon className={`w-5 h-5 transition-colors duration-300 ${active ? 'text-purple-500' : 'group-hover:text-white'}`} />
+                  <item.icon className={`w-5 h-5 transition-colors duration-300 ${active ? 'text-blue-500' : 'group-hover:text-white'}`} />
                   <span className={`font-bold text-sm transition-all duration-500 whitespace-nowrap ${isSidebarOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
                     {item.name}
                   </span>
@@ -82,7 +82,7 @@ export default function AdminLayout() {
                   {active && (
                     <motion.div 
                       layoutId="activeNav"
-                      className="absolute left-0 w-1 h-6 bg-purple-600 rounded-r-full"
+                      className="absolute left-0 w-1 h-6 bg-blue-600 rounded-r-full"
                     />
                   )}
                   
@@ -99,7 +99,7 @@ export default function AdminLayout() {
           {/* User Profile */}
           <div className="p-4 border-t border-white/5">
             <div className={`flex items-center gap-4 bg-white/5 p-3 rounded-2xl border border-white/5 transition-all ${isSidebarOpen ? 'w-full' : 'w-12 px-2 overflow-hidden'}`}>
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center font-black text-xs shadow-lg flex-shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-blue-400 flex items-center justify-center font-black text-xs shadow-lg flex-shrink-0">
                 {authUser?.avatar ? (
                    <img src={authUser.avatar} alt="Admin" className="w-full h-full object-cover rounded-xl" />
                 ) : (
@@ -135,11 +135,11 @@ export default function AdminLayout() {
             </button>
             
             <div className="relative hidden lg:block w-96 group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-purple-500 transition-colors" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-blue-500 transition-colors" />
               <input 
                 type="text" 
                 placeholder="Buyruqlar bo'yicha qidirish..." 
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-12 py-2.5 text-sm outline-none focus:border-purple-500 transition-all font-medium text-gray-300"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-12 py-2.5 text-sm outline-none focus:border-blue-500 transition-all font-medium text-gray-300"
               />
               <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1">
                 <kbd className="text-[10px] bg-white/10 px-1.5 py-0.5 rounded border border-white/5 text-gray-500">⌘</kbd>
@@ -156,7 +156,7 @@ export default function AdminLayout() {
               >
                 <Bell className="w-5 h-5" />
                 {notifications.length > 0 && (
-                  <span className="absolute top-2 right-2 w-2 h-2 bg-purple-500 rounded-full border-2 border-[#070708] shadow-[0_0_10px_rgba(168,85,247,0.5)]"></span>
+                  <span className="absolute top-2 right-2 w-2 h-2 bg-blue-500 rounded-full border-2 border-[#070708] shadow-[0_0_10px_rgba(37,99,235,0.5)]"></span>
                 )}
               </button>
 
@@ -172,7 +172,7 @@ export default function AdminLayout() {
                     >
                       <div className="flex items-center justify-between mb-4 px-2">
                         <span className="text-sm font-black">Xabarlar</span>
-                        <span className="text-[10px] bg-purple-500/10 text-purple-500 px-2 py-0.5 rounded-full font-bold">{notifications.length} ta</span>
+                        <span className="text-[10px] bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded-full font-bold">{notifications.length} ta</span>
                       </div>
                       <div className="space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
                         {notifications.length > 0 ? (
@@ -202,7 +202,7 @@ export default function AdminLayout() {
             </div>
 
             <button className="flex items-center gap-3 bg-white/5 pr-4 pl-1.5 py-1.5 rounded-2xl border border-white/10 hover:bg-white/10 transition-all">
-              <div className="w-7 h-7 bg-purple-600 rounded-xl flex items-center justify-center">
+              <div className="w-7 h-7 bg-blue-600 rounded-xl flex items-center justify-center">
                 <User className="w-4 h-4" />
               </div>
               <span className="text-xs font-bold whitespace-nowrap">Super Admin</span>

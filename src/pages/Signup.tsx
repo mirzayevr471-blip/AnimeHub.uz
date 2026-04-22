@@ -57,13 +57,13 @@ export default function Signup() {
           className="bg-[#0a0a0c] border border-white/5 rounded-[40px] p-8 md:p-12 shadow-2xl relative overflow-hidden"
         >
           {/* Decorative background gradients */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 blur-[100px] -mr-32 -mt-32"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 blur-[100px] -mr-32 -mt-32"></div>
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-600/10 blur-[100px] -ml-32 -mb-32"></div>
 
           <div className="relative z-10">
             <div className="mb-10 text-center">
-              <div className="w-16 h-16 bg-purple-600/20 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-purple-500/20">
-                <Play className="w-8 h-8 text-purple-500 fill-current" />
+              <div className="w-16 h-16 bg-blue-600/20 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-blue-500/20">
+                <Play className="w-8 h-8 text-blue-500 fill-current" />
               </div>
               <h1 className="text-3xl font-black tracking-tight mb-2">Ro'yxatdan o'tish</h1>
               <p className="text-gray-500 text-sm font-medium">AniHub oilasiga xush kelibsiz!</p>
@@ -84,7 +84,7 @@ export default function Signup() {
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">To'liq ismingiz</label>
                 <div className="relative group">
-                  <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-purple-500 transition-colors">
+                  <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-blue-500 transition-colors">
                     <User className="w-4 h-4" />
                   </div>
                   <input
@@ -93,7 +93,7 @@ export default function Signup() {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="Masalan: Azizbek"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 text-sm focus:outline-none focus:border-purple-500 transition-all text-white placeholder:text-gray-700 font-medium"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 text-sm focus:outline-none focus:border-blue-500 transition-all text-white placeholder:text-gray-700 font-medium"
                   />
                 </div>
               </div>
@@ -101,7 +101,7 @@ export default function Signup() {
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Email Manzil</label>
                 <div className="relative group">
-                  <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-purple-500 transition-colors">
+                  <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-blue-500 transition-colors">
                     <Mail className="w-4 h-4" />
                   </div>
                   <input
@@ -110,7 +110,7 @@ export default function Signup() {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="email@misol.uz"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 text-sm focus:outline-none focus:border-purple-500 transition-all text-white placeholder:text-gray-700 font-medium"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 text-sm focus:outline-none focus:border-blue-500 transition-all text-white placeholder:text-gray-700 font-medium"
                   />
                 </div>
               </div>
@@ -118,7 +118,7 @@ export default function Signup() {
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Parol yaratish</label>
                 <div className="relative group">
-                  <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-purple-500 transition-colors">
+                  <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-blue-500 transition-colors">
                     <Lock className="w-4 h-4" />
                   </div>
                   <input
@@ -127,24 +127,24 @@ export default function Signup() {
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     placeholder="••••••••"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 text-sm focus:outline-none focus:border-purple-500 transition-all text-white placeholder:text-gray-700 font-medium font-mono"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 text-sm focus:outline-none focus:border-blue-500 transition-all text-white placeholder:text-gray-700 font-medium font-mono"
                   />
                 </div>
               </div>
 
               <div className="flex items-start gap-3 px-1 py-2">
-                 <div className="w-5 h-5 bg-purple-500/10 border border-purple-500/20 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <ShieldCheck className="w-3 h-3 text-purple-500" />
+                 <div className="w-5 h-5 bg-blue-500/10 border border-blue-500/20 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <ShieldCheck className="w-3 h-3 text-blue-500" />
                  </div>
                  <p className="text-[10px] text-gray-500 font-medium leading-relaxed">
-                   Ro'yxatdan o'tish orqali siz bizning <span className="text-purple-400">Xizmat ko'rsatish shartlari</span> va <span className="text-purple-400">Maxfiylik siyosatimizga</span> rozilik bildirasiz.
+                   Ro'yxatdan o'tish orqali siz bizning <span className="text-blue-400">Xizmat ko'rsatish shartlari</span> va <span className="text-blue-400">Maxfiylik siyosatimizga</span> rozilik bildirasiz.
                  </p>
               </div>
 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-black text-xs uppercase tracking-widest py-5 rounded-2xl transition-all shadow-xl shadow-purple-900/20 active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed group"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-widest py-5 rounded-2xl transition-all shadow-xl shadow-blue-900/20 active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed group"
               >
                 {isSubmitting ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -185,7 +185,7 @@ export default function Signup() {
             <div className="mt-10 pt-8 border-t border-white/5 text-center">
               <p className="text-sm text-gray-500 font-medium">
                 Akkauntingiz bormi?{' '}
-                <Link to="/login" className="text-purple-400 font-bold hover:text-purple-300 transition-colors">Kirish</Link>
+                <Link to="/login" className="text-blue-400 font-bold hover:text-blue-300 transition-colors">Kirish</Link>
               </p>
             </div>
           </div>

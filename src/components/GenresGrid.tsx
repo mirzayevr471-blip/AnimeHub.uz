@@ -22,7 +22,7 @@ const GenresGrid = () => {
           <span 
             key={genre}
             onClick={() => toggleGenre(genre)}
-            className={`genre-pill cursor-pointer select-none transition-all ${currentGenre === genre ? 'bg-purple-600 border-purple-500 text-white' : ''}`}
+            className={`genre-pill cursor-pointer select-none transition-all ${currentGenre === genre ? 'bg-blue-600 border-blue-500 text-white' : ''}`}
           >
             {genre}
           </span>

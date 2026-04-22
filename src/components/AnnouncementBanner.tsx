@@ -15,7 +15,7 @@ export default function AnnouncementBanner() {
   const getTypeStyles = (type: string) => {
     switch(type) {
       case 'warning': return 'bg-yellow-500/10 border-yellow-500/20 text-yellow-500';
-      case 'danger': return 'bg-rose-500/10 border-rose-500/20 text-rose-500';
+      case 'danger': return 'bg-blue-500/10 border-blue-500/20 text-blue-500';
       case 'success': return 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500';
       case 'info':
       default: return 'bg-blue-500/10 border-blue-500/20 text-blue-400';
@@ -25,7 +25,7 @@ export default function AnnouncementBanner() {
   const getIcon = (type: string) => {
     switch(type) {
       case 'warning': return <AlertTriangle className="w-5 h-5" />;
-      case 'danger': return <AlertTriangle className="w-5 h-5 text-rose-500" />;
+      case 'danger': return <AlertTriangle className="w-5 h-5 text-blue-500" />;
       case 'success': return <CheckCircle2 className="w-5 h-5" />;
       case 'info':
       default: return <Info className="w-5 h-5" />;

@@ -121,7 +121,7 @@ export default function Watch() {
           </div>
           <h2 className="text-2xl font-black mb-2">Anime topilmadi</h2>
           <p className="text-gray-500 mb-8 max-w-md">Siz so'rayotgan anime o'chirilgan yoki manzilda xatolik bor.</p>
-          <Link to="/" className="bg-purple-600 hover:bg-purple-700 px-8 py-3 rounded-2xl font-bold transition-all shadow-xl shadow-purple-900/20">Bosh sahifaga qaytish</Link>
+          <Link to="/" className="bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-2xl font-bold transition-all shadow-xl shadow-blue-900/20">Bosh sahifaga qaytish</Link>
         </div>
         <Footer />
       </div>
@@ -133,11 +133,11 @@ export default function Watch() {
     .slice(0, 6);
 
   return (
-    <div className="min-h-screen bg-[#070708] text-white selection:bg-purple-600/30">
+    <div className="min-h-screen bg-[#070708] text-white selection:bg-blue-600/30">
       <Header />
       
       {/* Toast Notification */}
-      <AnimatePresence>
+<AnimatePresence>
         {toast && (
           <motion.div 
             initial={{ opacity: 0, y: -50, x: '-50%' }}
@@ -246,7 +246,7 @@ export default function Watch() {
                   <button
                     key={num}
                     onClick={() => handleRatingSubmit(num)}
-                    className="aspect-square rounded-xl bg-white/5 border border-white/5 hover:bg-purple-600 hover:border-purple-500 transition-all font-black text-sm flex items-center justify-center active:scale-90"
+                    className="aspect-square rounded-xl bg-white/5 border border-white/5 hover:bg-blue-600 hover:border-blue-500 transition-all font-black text-sm flex items-center justify-center active:scale-90"
                   >
                     {num}
                   </button>
@@ -270,9 +270,9 @@ export default function Watch() {
           {/* Breadcrumbs */}
           {!isCinemaMode && (
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-6 py-2">
-              <Link to="/" className="hover:text-purple-400 transition-colors">Bosh sahifa</Link>
+              <Link to="/" className="hover:text-blue-400 transition-colors">Bosh sahifa</Link>
               <ChevronRight className="w-3 h-3" />
-              <Link to="/?genre=Katalog" className="hover:text-purple-400 transition-colors">Katalog</Link>
+              <Link to="/?genre=Katalog" className="hover:text-blue-400 transition-colors">Katalog</Link>
               <ChevronRight className="w-3 h-3" />
               <span className="text-gray-300 truncate">{anime.title}</span>
             </div>
@@ -313,10 +313,10 @@ export default function Watch() {
                 {/* Cinema Mode Toggle */}
                 <button 
                   onClick={() => setIsCinemaMode(!isCinemaMode)}
-                  className="absolute bottom-6 right-6 z-20 bg-black/40 hover:bg-purple-600 backdrop-blur-md text-white p-3 rounded-2xl transition-all shadow-xl border border-white/10 hidden lg:block"
+                  className="absolute bottom-6 right-6 z-20 bg-black/40 hover:bg-blue-600 backdrop-blur-md text-white p-3 rounded-2xl transition-all shadow-xl border border-white/10 hidden lg:block"
                   title="Cinema Mode"
                 >
-                   <Eye className={`w-5 h-5 ${isCinemaMode ? 'text-purple-400' : ''}`} />
+                   <Eye className={`w-5 h-5 ${isCinemaMode ? 'text-blue-400' : ''}`} />
                 </button>
               </div>
 
@@ -364,7 +364,7 @@ export default function Watch() {
                     <div className="flex flex-wrap items-center gap-3">
                       <h1 className="text-2xl md:text-3xl font-black tracking-tight">{anime.title}</h1>
                       <div className="flex items-center gap-2">
-                         <div className="bg-purple-600/20 text-purple-400 px-3 py-1 rounded-xl text-xs font-black border border-purple-500/10">
+                         <div className="bg-blue-600/20 text-blue-400 px-3 py-1 rounded-xl text-xs font-black border border-blue-500/10">
                            {activeEpisode ? `${activeEpisode.number}-qism` : 'Tanlanmagan'}
                          </div>
                          <div className="bg-white/5 text-gray-400 px-3 py-1 rounded-xl text-xs font-black border border-white/5 uppercase tracking-widest">
@@ -396,7 +396,7 @@ export default function Watch() {
                     <button 
                       onClick={handleWatchLater}
                       className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl transition-all border font-bold text-sm active:scale-95 ${
-                        isSaved ? 'bg-purple-600 border-purple-500 text-white shadow-lg shadow-purple-900/20' : 'bg-white/5 hover:bg-white/10 border-white/5 text-white'
+                        isSaved ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-900/20' : 'bg-white/5 hover:bg-white/10 border-white/5 text-white'
                       }`}
                     >
                       <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
@@ -418,7 +418,7 @@ export default function Watch() {
                     <Link 
                       key={genre}
                       to={`/?genre=${genre}`}
-                      className="text-[10px] uppercase font-black tracking-widest bg-white/5 hover:bg-purple-600/20 hover:text-purple-400 border border-white/5 rounded-full px-4 py-1.5 transition-all"
+                      className="text-[10px] uppercase font-black tracking-widest bg-white/5 hover:bg-blue-600/20 hover:text-blue-400 border border-white/5 rounded-full px-4 py-1.5 transition-all"
                     >
                       {genre}
                     </Link>
@@ -429,7 +429,7 @@ export default function Watch() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8 py-8 border-y border-white/5 items-start">
                   <div className="md:col-span-3 space-y-4">
                     <h3 className="text-lg font-black flex items-center gap-2 uppercase tracking-tight">
-                      <Info className="w-5 h-5 text-purple-500" />
+                      <Info className="w-5 h-5 text-blue-500" />
                       Anime haqida
                     </h3>
                     <p className="text-gray-400 leading-relaxed text-sm">
@@ -459,7 +459,7 @@ export default function Watch() {
                 <div className="space-y-8 pt-8">
                   <div className="flex items-center justify-between">
                     <h3 className="text-xl font-black flex items-center gap-2">
-                       <MessageSquare className="w-6 h-6 text-purple-500" />
+                       <MessageSquare className="w-6 h-6 text-blue-500" />
                        Fikrlar 
                        <span className="text-sm font-bold text-gray-500 ml-2">(42)</span>
                     </h3>
@@ -470,16 +470,16 @@ export default function Watch() {
                   </div>
 
                   <div className="flex gap-4">
-                    <div className="w-12 h-12 bg-purple-600 rounded-2xl flex items-center justify-center font-black flex-shrink-0">
+                    <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center font-black flex-shrink-0">
                       MK
                     </div>
                     <div className="flex-1 space-y-3">
                       <textarea 
-                        className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm outline-none focus:border-purple-500 transition-all min-h-[100px] placeholder:text-gray-700" 
+                        className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm outline-none focus:border-blue-500 transition-all min-h-[100px] placeholder:text-gray-700" 
                         placeholder="Ushbu anime haqidagi fikringizni qoldiring..."
                       />
                       <div className="flex justify-end">
-                        <button className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-purple-900/20">
+                        <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-blue-900/20">
                           Yuborish
                         </button>
                       </div>
@@ -498,10 +498,10 @@ export default function Watch() {
                   <div className="p-6 border-b border-white/5 bg-white/[0.02]">
                     <div className="flex items-center justify-between">
                       <h3 className="text-sm font-black flex items-center gap-2 uppercase tracking-wide">
-                        <Play className="w-4 h-4 text-purple-500 fill-purple-500" />
+                        <Play className="w-4 h-4 text-blue-500 fill-blue-500" />
                         Epizodlar
                       </h3>
-                      <span className="text-[10px] font-black bg-purple-600/10 text-purple-400 px-3 py-1 rounded-full border border-purple-500/10 tracking-widest">
+                      <span className="text-[10px] font-black bg-blue-600/10 text-blue-400 px-3 py-1 rounded-full border border-blue-500/10 tracking-widest">
                         {anime.episodesList?.length || 0} QISM
                       </span>
                     </div>
@@ -515,14 +515,14 @@ export default function Watch() {
                           onClick={() => setActiveEpisode(ep)}
                           className={`w-full flex items-center gap-4 p-3 rounded-2xl border transition-all group overflow-hidden relative ${
                              activeEpisode?.id === ep.id 
-                               ? 'bg-purple-600/20 border-purple-500/30 text-white' 
+                               ? 'bg-blue-600/20 border-blue-500/30 text-white' 
                                : 'bg-white/5 border-white/5 text-gray-500 hover:bg-white/10 hover:text-gray-300'
                           }`}
                         >
                           <div className="w-20 h-14 rounded-xl overflow-hidden bg-black/40 flex-shrink-0 relative border border-white/5">
                             <img src={ep.thumbnail || anime.image} alt={ep.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
                             {activeEpisode?.id === ep.id && (
-                              <div className="absolute inset-0 bg-purple-600/60 flex items-center justify-center">
+                              <div className="absolute inset-0 bg-blue-600/60 flex items-center justify-center">
                                 <Play className="w-5 h-5 fill-white text-white animate-pulse" />
                               </div>
                             )}
@@ -559,7 +559,7 @@ export default function Watch() {
                           <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
                         </div>
                         <div className="flex flex-col justify-center min-w-0">
-                          <h4 className="text-[13px] font-black transition-colors group-hover:text-purple-400 truncate mb-1">{item.title}</h4>
+                          <h4 className="text-[13px] font-black transition-colors group-hover:text-blue-400 truncate mb-1">{item.title}</h4>
                           <div className="flex items-center gap-2 text-[10px] text-gray-500 font-bold uppercase tracking-widest">
                             <span className="text-yellow-400">★ {item.rating.toFixed(1)}</span>
                             <span>{item.year}</span>

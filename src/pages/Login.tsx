@@ -58,7 +58,7 @@ export default function Login() {
           className="bg-[#0a0a0c] border border-white/5 rounded-[40px] p-8 md:p-12 shadow-2xl relative overflow-hidden"
         >
           {/* Decorative background gradients */}
-          <div className="absolute top-0 left-0 w-64 h-64 bg-purple-600/10 blur-[100px] -ml-32 -mt-32"></div>
+          <div className="absolute top-0 left-0 w-64 h-64 bg-blue-600/10 blur-[100px] -ml-32 -mt-32"></div>
           <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-600/10 blur-[100px] -mr-32 -mb-32"></div>
 
           <div className="relative z-10">
@@ -85,7 +85,7 @@ export default function Login() {
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Email Manzil</label>
                 <div className="relative group">
-                  <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-purple-500 transition-colors">
+                  <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-blue-500 transition-colors">
                     <Mail className="w-4 h-4" />
                   </div>
                   <input
@@ -94,7 +94,7 @@ export default function Login() {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="email@misol.uz"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 text-sm focus:outline-none focus:border-purple-500 transition-all text-white placeholder:text-gray-700 font-medium"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 text-sm focus:outline-none focus:border-blue-500 transition-all text-white placeholder:text-gray-700 font-medium"
                   />
                 </div>
               </div>
@@ -102,10 +102,10 @@ export default function Login() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between ml-1">
                   <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Parol</label>
-                  <button type="button" className="text-[10px] text-purple-400 font-bold hover:text-purple-300 transition-colors uppercase tracking-widest">Unutdingizmi?</button>
+                  <button type="button" className="text-[10px] text-blue-400 font-bold hover:text-blue-300 transition-colors uppercase tracking-widest">Unutdingizmi?</button>
                 </div>
                 <div className="relative group">
-                  <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-purple-500 transition-colors">
+                  <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-blue-500 transition-colors">
                     <Lock className="w-4 h-4" />
                   </div>
                   <input
@@ -114,7 +114,7 @@ export default function Login() {
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     placeholder="••••••••"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 text-sm focus:outline-none focus:border-purple-500 transition-all text-white placeholder:text-gray-700 font-medium font-mono"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 text-sm focus:outline-none focus:border-blue-500 transition-all text-white placeholder:text-gray-700 font-medium font-mono"
                   />
                 </div>
               </div>

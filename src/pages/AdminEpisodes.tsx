@@ -97,7 +97,7 @@ export default function AdminEpisodes() {
         
         <button 
           onClick={() => setIsAdding(true)}
-          className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-2xl font-bold text-sm transition-all shadow-xl shadow-purple-900/30 flex items-center gap-2"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-bold text-sm transition-all shadow-xl shadow-blue-900/30 flex items-center gap-2"
         >
           <Plus className="w-5 h-5" />
           Yangi Epizod
@@ -108,7 +108,7 @@ export default function AdminEpisodes() {
         {/* Statistics Column */}
         <div className="lg:col-span-1 space-y-6">
           <div className="bg-[#0a0a0c] rounded-[32px] border border-white/5 p-6 overflow-hidden relative">
-            <div className="absolute -right-4 -top-4 w-32 h-32 bg-purple-600/10 blur-3xl rounded-full"></div>
+            <div className="absolute -right-4 -top-4 w-32 h-32 bg-blue-600/10 blur-3xl rounded-full"></div>
             <img src={anime.image} alt={anime.title} className="w-full aspect-[3/4] object-cover rounded-2xl mb-6 shadow-2xl" referrerPolicy="no-referrer" />
             <div className="space-y-4">
               <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
@@ -134,7 +134,7 @@ export default function AdminEpisodes() {
           <div className="bg-[#0a0a0c] rounded-[32px] border border-white/5 overflow-hidden shadow-2xl">
             <div className="p-6 border-b border-white/5 bg-white/[0.02] flex items-center justify-between">
               <h3 className="text-lg font-black">Epizodlar Ro'yxati</h3>
-              <div className="text-[10px] font-black bg-purple-600/10 text-purple-400 px-3 py-1 rounded-full border border-purple-500/10 uppercase tracking-widest">
+              <div className="text-[10px] font-black bg-blue-600/10 text-blue-400 px-3 py-1 rounded-full border border-blue-500/10 uppercase tracking-widest">
                 {anime.episodesList?.length || 0} TA QISM
               </div>
             </div>
@@ -160,7 +160,7 @@ export default function AdminEpisodes() {
                       transition={{ delay: idx * 0.05 }}
                       className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 group hover:bg-white/10 transition-all"
                     >
-                      <div className="relative group/thumb w-24 h-16 rounded-xl overflow-hidden bg-purple-600/10 border border-purple-500/10 group-hover:border-purple-500/30 transition-all flex-shrink-0">
+                      <div className="relative group/thumb w-24 h-16 rounded-xl overflow-hidden bg-blue-600/10 border border-blue-500/10 group-hover:border-blue-500/30 transition-all flex-shrink-0">
                         <img 
                           src={ep.thumbnail || anime.image} 
                           alt={ep.title} 
@@ -170,7 +170,7 @@ export default function AdminEpisodes() {
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/thumb:opacity-100 transition-opacity flex items-center justify-center">
                           <button 
                             onClick={() => setPlayingEpisode(ep)}
-                            className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white shadow-lg"
+                            className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-lg"
                           >
                             <Play className="w-4 h-4 fill-white" />
                           </button>
@@ -180,7 +180,7 @@ export default function AdminEpisodes() {
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="font-bold text-sm truncate group-hover:text-purple-400 transition-colors flex items-center gap-2">
+                        <div className="font-bold text-sm truncate group-hover:text-blue-400 transition-colors flex items-center gap-2">
                           {ep.title}
                           <span className="text-[10px] text-gray-500 font-normal">#{ep.number}</span>
                         </div>
@@ -231,14 +231,14 @@ export default function AdminEpisodes() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative bg-[#0a0a0c] border border-white/10 rounded-[40px] w-full max-w-xl overflow-hidden shadow-[0_0_100px_rgba(124,58,237,0.15)]"
+              className="relative bg-[#0a0a0c] border border-white/10 rounded-[40px] w-full max-w-xl overflow-hidden shadow-[0_0_100px_rgba(37,99,235,0.15)]"
             >
               <div className="p-8 border-b border-white/5 flex items-center justify-between">
                 <div>
                   <h3 className="text-2xl font-black">Yangi Epizod</h3>
                   <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest font-bold">Har bir maydonni to'ldiring</p>
                 </div>
-                <div className="w-12 h-12 bg-purple-600/10 rounded-2xl flex items-center justify-center text-purple-500">
+                <div className="w-12 h-12 bg-blue-600/10 rounded-2xl flex items-center justify-center text-blue-500">
                   <Video className="w-6 h-6" />
                 </div>
               </div>
@@ -247,7 +247,7 @@ export default function AdminEpisodes() {
                 <div className="grid grid-cols-2 gap-6">
                   <div>
                     <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-2">
-                       <Hash className="w-3 h-3 text-purple-400" />
+                       <Hash className="w-3 h-3 text-blue-400" />
                        Qism raqami
                     </label>
                     <input 
@@ -255,12 +255,12 @@ export default function AdminEpisodes() {
                       type="number" 
                       value={formData.number}
                       onChange={e => setFormData({...formData, number: Number(e.target.value)})}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-purple-500 focus:outline-none transition-all" 
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-blue-500 focus:outline-none transition-all" 
                     />
                   </div>
                   <div>
                     <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-2">
-                       <Type className="w-3 h-3 text-purple-400" />
+                       <Type className="w-3 h-3 text-blue-400" />
                        Sarlavha
                     </label>
                     <input 
@@ -268,7 +268,7 @@ export default function AdminEpisodes() {
                       value={formData.title}
                       placeholder={`${formData.number}-qism`}
                       onChange={e => setFormData({...formData, title: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-purple-500 focus:outline-none transition-all placeholder:text-gray-700" 
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-blue-500 focus:outline-none transition-all placeholder:text-gray-700" 
                     />
                   </div>
                 </div>
@@ -276,7 +276,7 @@ export default function AdminEpisodes() {
                 <div className="grid grid-cols-2 gap-6">
                   <div>
                     <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-2">
-                       <Video className="w-3 h-3 text-purple-400" />
+                       <Video className="w-3 h-3 text-blue-400" />
                        Video Havolasi (URL)
                     </label>
                     <input 
@@ -285,12 +285,12 @@ export default function AdminEpisodes() {
                       value={formData.videoUrl}
                       onChange={e => setFormData({...formData, videoUrl: e.target.value})}
                       placeholder="https://myvideo.com/embed/..."
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-purple-500 focus:outline-none transition-all placeholder:text-gray-700" 
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-blue-500 focus:outline-none transition-all placeholder:text-gray-700" 
                     />
                   </div>
                   <div>
                     <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-2">
-                       <ImageIcon className="w-3 h-3 text-purple-400" />
+                       <ImageIcon className="w-3 h-3 text-blue-400" />
                        Thumbnail (Poster) URL
                     </label>
                     <input 
@@ -298,7 +298,7 @@ export default function AdminEpisodes() {
                       value={formData.thumbnail}
                       onChange={e => setFormData({...formData, thumbnail: e.target.value})}
                       placeholder="Ushbu qism uchun muqova..."
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-purple-500 focus:outline-none transition-all placeholder:text-gray-700" 
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-blue-500 focus:outline-none transition-all placeholder:text-gray-700" 
                     />
                   </div>
                 </div>
@@ -309,7 +309,7 @@ export default function AdminEpisodes() {
                     type="text" 
                     value={formData.duration}
                     onChange={e => setFormData({...formData, duration: e.target.value})}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-purple-500 focus:outline-none transition-all" 
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-blue-500 focus:outline-none transition-all" 
                   />
                 </div>
 
@@ -324,7 +324,7 @@ export default function AdminEpisodes() {
                   <button 
                     type="submit"
                     disabled={isLoading}
-                    className="flex-2 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-2xl font-black text-sm transition-all shadow-2xl shadow-purple-900/40 flex items-center justify-center gap-2"
+                    className="flex-2 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-sm transition-all shadow-2xl shadow-blue-900/40 flex items-center justify-center gap-2"
                   >
                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "EPIZODNI QO'SHISH"}
                   </button>
@@ -350,7 +350,7 @@ export default function AdminEpisodes() {
               initial={{ opacity: 0, scale: 0.9, y: 40 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 40 }}
-              className="relative w-full max-w-5xl aspect-video bg-black rounded-[40px] overflow-hidden border border-white/10 shadow-[0_0_100px_rgba(124,58,237,0.3)]"
+              className="relative w-full max-w-5xl aspect-video bg-black rounded-[40px] overflow-hidden border border-white/10 shadow-[0_0_100px_rgba(37,99,235,0.3)]"
             >
               <div className="absolute top-0 left-0 right-0 p-6 bg-gradient-to-b from-black/80 to-transparent z-10 flex items-center justify-between pointer-events-none">
                 <div>

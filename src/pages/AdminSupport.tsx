@@ -40,7 +40,7 @@ export default function AdminSupport() {
               <input 
                 type="text" 
                 placeholder="Foydalanuvchini qidirish..." 
-                className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-purple-500 transition-all"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-all"
               />
             </div>
           </div>
@@ -58,16 +58,16 @@ export default function AdminSupport() {
                   onClick={() => setSelectedUserId(chat.userId)}
                   className={`w-full flex items-center gap-4 p-4 rounded-3xl transition-all group border ${
                     selectedUserId === chat.userId 
-                      ? 'bg-purple-600/20 border-purple-500/30' 
+                      ? 'bg-blue-600/20 border-blue-500/30' 
                       : 'bg-white/5 border-white/5 hover:bg-white/10'
                   }`}
                 >
                   <div className="relative">
-                    <div className="w-12 h-12 bg-purple-600/20 rounded-2xl flex items-center justify-center border border-purple-500/20 text-purple-400 font-bold">
+                    <div className="w-12 h-12 bg-blue-600/20 rounded-2xl flex items-center justify-center border border-blue-500/20 text-blue-400 font-bold">
                       {chat.userName.charAt(0).toUpperCase()}
                     </div>
                     {chat.unreadCount ? (
-                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-purple-600 text-white rounded-full text-[10px] flex items-center justify-center font-black animate-pulse border-2 border-[#0a0a0c]">
+                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-600 text-white rounded-full text-[10px] flex items-center justify-center font-black animate-pulse border-2 border-[#0a0a0c]">
                         {chat.unreadCount}
                       </span>
                     ) : (
@@ -105,7 +105,7 @@ export default function AdminSupport() {
                 {/* Header */}
                 <div className="p-6 bg-white/[0.02] border-b border-white/5 flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-tr from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center font-black text-white text-xl">
+                    <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-blue-400 rounded-2xl flex items-center justify-center font-black text-white text-xl">
                       {selectedChat.userName.charAt(0).toUpperCase()}
                     </div>
                     <div>
@@ -126,7 +126,7 @@ export default function AdminSupport() {
                 {/* Messages Area */}
                 <div 
                   ref={scrollRef}
-                  className="flex-1 overflow-y-auto p-8 space-y-6 custom-scrollbar bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.02),transparent)]"
+                  className="flex-1 overflow-y-auto p-8 space-y-6 custom-scrollbar bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.02),transparent)]"
                 >
                   {selectedChat.messages.map((msg, idx) => (
                     <div 
@@ -135,18 +135,18 @@ export default function AdminSupport() {
                     >
                       <div className={`flex gap-3 max-w-[70%] ${msg.isAdmin ? 'flex-row-reverse' : ''}`}>
                         <div className={`w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center font-bold text-[10px] ${
-                          msg.isAdmin ? 'bg-indigo-600 text-white' : 'bg-white/10 text-gray-400'
+                          msg.isAdmin ? 'bg-blue-600 text-white' : 'bg-white/10 text-gray-400'
                         }`}>
                           {msg.isAdmin ? 'AD' : selectedChat.userName.charAt(0).toUpperCase()}
                         </div>
                         <div className={`rounded-3xl p-4 text-sm ${
                           msg.isAdmin 
-                            ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-900/20' 
+                            ? 'bg-blue-600 text-white shadow-xl shadow-blue-900/20' 
                             : 'bg-white/5 border border-white/5 text-gray-300'
                         }`}>
                           <p>{msg.text}</p>
                           <div className={`flex items-center gap-2 mt-2 text-[8px] font-black uppercase tracking-widest ${
-                            msg.isAdmin ? 'text-indigo-200' : 'text-gray-600'
+                            msg.isAdmin ? 'text-blue-200' : 'text-gray-600'
                           }`}>
                             <Clock className="w-2.5 h-2.5" />
                             {new Date(msg.timestamp).toLocaleString()}
@@ -167,11 +167,11 @@ export default function AdminSupport() {
                       value={replyText}
                       onChange={(e) => setReplyText(e.target.value)}
                       placeholder="Javobingizni shu yerga yozing..."
-                      className="w-full bg-[#070708] border border-white/10 rounded-[24px] px-6 py-5 text-sm focus:outline-none focus:border-indigo-500 transition-all pr-20 min-h-[100px] resize-none placeholder:text-gray-700"
+                      className="w-full bg-[#070708] border border-white/10 rounded-[24px] px-6 py-5 text-sm focus:outline-none focus:border-blue-500 transition-all pr-20 min-h-[100px] resize-none placeholder:text-gray-700"
                     />
                     <button 
                       type="submit"
-                      className="absolute right-4 bottom-4 w-12 h-12 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-900/40 transition-all active:scale-95"
+                      className="absolute right-4 bottom-4 w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl flex items-center justify-center shadow-xl shadow-blue-900/40 transition-all active:scale-95"
                     >
                       <Send className="w-5 h-5" />
                     </button>
