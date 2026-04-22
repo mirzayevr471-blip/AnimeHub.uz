@@ -4,7 +4,7 @@ import { recentlyAdded } from '../data/mockData';
 
 interface AnimeContextType {
   animes: Anime[];
-  addAnime: (anime: Omit<Anime, 'id'>) => void;
+  addAnime: (anime: Omit<Anime, 'id'>) => string;
   deleteAnime: (id: string) => void;
   updateAnime: (id: string, data: Partial<Anime>) => void;
   addEpisode: (animeId: string, episode: Omit<Episode, 'id' | 'addedAt'>) => void;
@@ -17,8 +17,10 @@ export const AnimeProvider: React.FC<{children: React.ReactNode}> = ({ children 
   const [animes, setAnimes] = useState<Anime[]>(recentlyAdded);
 
   const addAnime = (anime: Omit<Anime, 'id'>) => {
-    const newAnime = { ...anime, id: Date.now().toString(), episodesList: [] };
-    setAnimes([newAnime, ...animes]);
+    const id = Date.now().toString();
+    const newAnime = { ...anime, id, episodesList: [] };
+    setAnimes(prev => [newAnime, ...prev]);
+    return id;
   };
 
   const deleteAnime = (id: string) => {

@@ -203,6 +203,82 @@ async function startServer() {
     });
   });
 
+  // 5. Telegram Notification
+  app.post('/api/admin/telegram/notify', async (req, res) => {
+    // Basic auth check for admin - assuming we secure this route
+    if (!(req.session as any).user || (req.session as any).user.role !== 'admin') {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    const { TELEGRAM_BOT_TOKEN, TELEGRAM_CHANNEL_ID } = process.env;
+    if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHANNEL_ID) {
+      return res.status(500).json({ error: 'Telegram bot kalitlari kiritilmagan. Sozlamalar menyusidan kalitlarni kiriting.' });
+    }
+
+    const { title, type, genres, status, imageUrl, animeId } = req.body;
+    
+    // Construct App URL
+    const origin = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
+    const watchUrl = `${origin}/watch/${animeId}`;
+
+    const messageText = `📺 *Yangi Anime Qo'shildi!*\n\n🎬 *Nomi:* ${title}\n🎭 *Janr:* ${genres.join(', ')}\n📋 *Turi:* ${type}\n📊 *Holati:* ${status}\n\n👇 *Saytimiz orqali tomosha qiling!*`;
+
+    try {
+      const tgUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`;
+      const response = await fetch(tgUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chat_id: TELEGRAM_CHANNEL_ID,
+          photo: imageUrl,
+          caption: messageText,
+          parse_mode: 'Markdown',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '🍿 Tomosha qilish', url: watchUrl }]
+            ]
+          }
+        }),
+      });
+
+      const data = await response.json();
+      if (!data.ok) {
+        throw new Error(data.description || 'Failed to send to Telegram');
+      }
+
+      res.json({ status: 'ok' });
+    } catch (error) {
+      console.error('Telegram API Error:', error);
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
+    }
+  });
+
+  // 6. Telegram Keys Management
+  app.get('/api/admin/telegram/config', (req, res) => {
+    if (!(req.session as any).user || (req.session as any).user.role !== 'admin') {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+    res.json({ 
+      botToken: process.env.TELEGRAM_BOT_TOKEN || '', 
+      channelId: process.env.TELEGRAM_CHANNEL_ID || '' 
+    });
+  });
+
+  app.post('/api/admin/telegram/config', (req, res) => {
+    if (!(req.session as any).user || (req.session as any).user.role !== 'admin') {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+    const { botToken, channelId } = req.body;
+    
+    // Process env update for current instance memory
+    if (botToken !== undefined) process.env.TELEGRAM_BOT_TOKEN = botToken;
+    if (channelId !== undefined) process.env.TELEGRAM_CHANNEL_ID = channelId;
+    
+    res.json({ status: 'ok' });
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({

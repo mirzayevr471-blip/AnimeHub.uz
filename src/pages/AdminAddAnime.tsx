@@ -9,6 +9,7 @@ export default function AdminAddAnime() {
   const { addAnime } = useAnime();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [sendToTelegram, setSendToTelegram] = useState(true);
   
   const [formData, setFormData] = useState({
     title: '',
@@ -47,7 +48,7 @@ export default function AdminAddAnime() {
     setLoading(true);
 
     try {
-      addAnime({
+      const newId = addAnime({
         title: formData.title,
         image: formData.image,
         rating: parseFloat(formData.rating),
@@ -56,6 +57,21 @@ export default function AdminAddAnime() {
         status: formData.status,
         genres: formData.genres
       });
+
+      if (sendToTelegram) {
+        await fetch('/api/admin/telegram/notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            animeId: newId,
+            title: formData.title,
+            imageUrl: formData.image,
+            genres: formData.genres,
+            type: formData.type,
+            status: formData.status
+          })
+        }).catch(err => console.error("Telegram error:", err)); // Error silent to not block local success
+      }
 
       setSuccess(true);
       setTimeout(() => {
@@ -248,7 +264,17 @@ export default function AdminAddAnime() {
               </div>
             </div>
 
-            <div className="pt-6 border-t border-white/5 flex justify-end gap-4">
+            <div className="pt-6 border-t border-white/5 flex justify-end gap-4 items-center">
+              <label className="flex items-center gap-2 text-sm text-gray-400 font-bold cursor-pointer group mr-auto">
+                <input 
+                  type="checkbox"
+                  checked={sendToTelegram}
+                  onChange={(e) => setSendToTelegram(e.target.checked)}
+                  className="rounded bg-[#0a0a0c] border-white/20 text-purple-500 focus:ring-purple-500 focus:ring-offset-0 focus:ring-offset-[#070708]"
+                />
+                <span className="group-hover:text-white transition-colors">Telegram kanalga yuborish</span>
+              </label>
+
               <button 
                 type="button"
                 onClick={() => navigate('/admin/animes')}

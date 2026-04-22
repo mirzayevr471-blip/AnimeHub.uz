@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useSettings } from '../context/SettingsContext';
 
 export default function AdminSettings() {
-  const { settings: globalSettings, updateSettings, updateSocialLinks } = useSettings();
+  const { settings: globalSettings, updateSettings } = useSettings();
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<'stable' | 'warning' | null>(null);
@@ -13,19 +13,42 @@ export default function AdminSettings() {
 
   // Local state for forms
   const [formData, setFormData] = useState(globalSettings);
+  const [tgConfig, setTgConfig] = useState({ botToken: '', channelId: '' });
 
   useEffect(() => {
     setFormData(globalSettings);
   }, [globalSettings]);
 
-  const handleSave = () => {
+  useEffect(() => {
+    if (activeSection === 'api') {
+      fetch('/api/admin/telegram/config')
+        .then(res => res.json())
+        .then(data => {
+          if (!data.error) {
+            setTgConfig({ botToken: data.botToken, channelId: data.channelId });
+          }
+        })
+        .catch(console.error);
+    }
+  }, [activeSection]);
+
+  const handleSave = async () => {
     setIsSaving(true);
+    
+    if (activeSection === 'api') {
+      await fetch('/api/admin/telegram/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(tgConfig)
+      }).catch(console.error);
+    }
+    
+    updateSettings(formData);
     setTimeout(() => {
-      updateSettings(formData);
       setIsSaving(false);
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
-    }, 800);
+    }, 500);
   };
 
   const sections = [
@@ -102,6 +125,51 @@ export default function AdminSettings() {
               <p className="text-[10px] text-gray-500 font-medium leading-relaxed italic text-center">
                 Footer'dagi belgilar bu yerda kiritilgan havolalar asosida avtomatik ravishda ko'rinadi. 
                 Agar havolani bo'sh qoldirsangiz, belgi saytdan yashiriladi.
+              </p>
+            </div>
+          </div>
+        );
+      }
+      case 'api': {
+        return (
+          <div className="space-y-6 animate-in fade-in duration-500">
+            <div className="text-xs font-black uppercase tracking-widest text-gray-500 mb-4 px-1">Tashqi Xizmatlar Kalitlari</div>
+            <div className="p-6 bg-[#0a0a0c] border border-white/5 rounded-[32px] space-y-6">
+              <div>
+                <h3 className="text-lg font-bold flex items-center gap-2 mb-1">
+                  <Send className="w-5 h-5 text-purple-500" />
+                  Telegram Bot Integratsiyasi
+                </h3>
+                <p className="text-xs text-gray-500">Kanalga xabarlar yuborish uchun bot tokeni va kanal ID/username kiritilishi kerak.</p>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Bot Tokeni</label>
+                  <input 
+                    type="password" 
+                    placeholder="Masalan: 123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+                    value={tgConfig.botToken}
+                    onChange={(e) => setTgConfig({...tgConfig, botToken: e.target.value})}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-purple-500 transition-all text-white placeholder:text-gray-700 font-mono" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Kanal Username yoki ID</label>
+                  <input 
+                    type="text" 
+                    placeholder="Masalan: @anihub_uz yoki -10012345678"
+                    value={tgConfig.channelId}
+                    onChange={(e) => setTgConfig({...tgConfig, channelId: e.target.value})}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-purple-500 transition-all text-white placeholder:text-gray-700 font-mono" 
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-6 bg-purple-500/5 border border-purple-500/10 rounded-[32px]">
+              <p className="text-[10px] text-purple-400 font-medium leading-relaxed italic text-center">
+                Eslatma: Ushbu tokenlar yordamida "Yangi anime qo'shish" bo'limida belgilangan kanalga avtomatik ravishda xabar yuboriladi. Telegram botni o'z kanalingizga qo'shib unga yozish huquqini berishingiz zarur!
               </p>
             </div>
           </div>
