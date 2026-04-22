@@ -30,10 +30,13 @@ export default function AdminUsers() {
   const loadUsers = () => {
     setIsLoading(true);
     try {
-      const storedUsers = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+      const data = localStorage.getItem(USERS_KEY);
+      const storedUsers = data ? JSON.parse(data) : [];
       setUsers(storedUsers);
     } catch (err) {
       console.error('Failed to load users:', err);
+      // Fallback
+      setUsers([]);
     } finally {
       setIsLoading(false);
     }
@@ -48,7 +51,8 @@ export default function AdminUsers() {
     if (!newAdminEmail.trim()) return;
 
     try {
-      const storedUsers = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+      const data = localStorage.getItem(USERS_KEY);
+      const storedUsers = data ? JSON.parse(data) : [];
       const userIndex = storedUsers.findIndex((u: any) => u.email === newAdminEmail);
 
       if (userIndex === -1) {
@@ -74,7 +78,8 @@ export default function AdminUsers() {
 
   const handleRemoveAdmin = (userId: string) => {
     try {
-      const storedUsers = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+      const data = localStorage.getItem(USERS_KEY);
+      const storedUsers = data ? JSON.parse(data) : [];
       const user = storedUsers.find((u: any) => u.id === userId);
 
       if (user?.isSuperAdmin) {

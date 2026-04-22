@@ -80,7 +80,7 @@ const Hero = () => {
               <div className="flex items-center gap-5">
                 <button 
                   onClick={handleWatch}
-                  className="bg-red-600 hover:bg-red-700 text-white font-black text-xs uppercase tracking-widest py-3 sm:py-4 px-8 sm:px-10 rounded-full flex items-center gap-3 transition-transform hover:scale-105 active:scale-95 shadow-xl shadow-red-600/20"
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-widest py-3 sm:py-4 px-8 sm:px-10 rounded-full flex items-center gap-3 transition-transform hover:scale-105 active:scale-95 shadow-xl shadow-blue-600/20"
                 >
                   <Play className="w-4 h-4 fill-current" />
                   MA'LUMOT

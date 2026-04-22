@@ -15,6 +15,16 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const USERS_KEY = 'anihub_users_db';
 const CURRENT_USER_KEY = 'anihub_current_user';
 
+const getStoredUsers = () => {
+  try {
+    const data = localStorage.getItem(USERS_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch (e) {
+    console.error("Corrupt USERS_KEY data in localStorage", e);
+    return [];
+  }
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -27,7 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const data = await response.json();
         if (data.user) {
           // Sync with USERS_KEY for admin panel visibility
-          const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+          const users = getStoredUsers();
           const existingIdx = users.findIndex((u: any) => u.email === data.user.email);
           
           let finalUser = { ...data.user };
@@ -50,7 +60,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } catch (err) {
         console.error('Failed to fetch session user:', err);
         const savedUser = localStorage.getItem(CURRENT_USER_KEY);
-        if (savedUser) setUser(JSON.parse(savedUser));
+        try {
+          if (savedUser) setUser(JSON.parse(savedUser));
+        } catch (e) {
+          console.error("Corrupted CURRENT_USER_KEY");
+        }
       } finally {
         setIsLoading(false);
       }
@@ -71,7 +85,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .then(res => res.json())
           .then(data => {
             if (data.user) {
-              const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+              const users = getStoredUsers();
               const existingIdx = users.findIndex((u: any) => u.email === data.user.email);
               
               let finalUser = { ...data.user };
@@ -129,7 +143,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Simulate API call
     return new Promise<void>((resolve, reject) => {
       setTimeout(() => {
-        const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+        const users = getStoredUsers();
         const foundUser = users.find((u: any) => u.email === email && u.password === password);
         
         if (foundUser) {
@@ -147,7 +161,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signup = async (userData: any) => {
     return new Promise<void>((resolve, reject) => {
       setTimeout(() => {
-        const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+        const users = getStoredUsers();
         if (users.find((u: any) => u.email === userData.email)) {
           reject(new Error("Ushbu email bilan allaqachon ro'yxatdan o'tilgan"));
           return;
