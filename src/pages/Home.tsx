@@ -19,15 +19,17 @@ export default function Home() {
   const searchQuery = searchParams.get('q') || '';
   const genreQuery = searchParams.get('genre') || '';
   const filterQuery = searchParams.get('filter') || '';
+  const statusQuery = searchParams.get('status') || '';
 
   const filteredAnimes = useMemo(() => {
     return animes.filter(anime => {
       const matchesSearch = anime.title.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesGenre = !genreQuery || genreQuery === 'Katalog' || anime.genres.includes(genreQuery);
       const matchesFilter = !filterQuery || (filterQuery === 'Mashhur' && anime.rating >= 8.5);
-      return matchesSearch && matchesGenre && matchesFilter;
+      const matchesStatus = !statusQuery || anime.status === statusQuery;
+      return matchesSearch && matchesGenre && matchesFilter && matchesStatus;
     });
-  }, [animes, searchQuery, genreQuery, filterQuery]);
+  }, [animes, searchQuery, genreQuery, filterQuery, statusQuery]);
 
   const totalPages = Math.ceil(filteredAnimes.length / itemsPerPage);
   const displayedAnimes = useMemo(() => {
@@ -37,13 +39,13 @@ export default function Home() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, genreQuery, filterQuery]);
+  }, [searchQuery, genreQuery, filterQuery, statusQuery]);
 
   const popularAnimes = useMemo(() => 
     [...animes].sort((a,b) => b.rating - a.rating).slice(0, 10),
   [animes]);
 
-  const isFiltering = searchQuery || (genreQuery && genreQuery !== '') || filterQuery;
+  const isFiltering = searchQuery || (genreQuery && genreQuery !== '') || filterQuery || statusQuery;
 
   const clearFilters = () => {
     setSearchParams({});
@@ -74,6 +76,10 @@ export default function Home() {
                        ) : filterQuery === 'Mashhur' ? (
                          <>
                            <span className="text-purple-500">Mashhur</span> animelar
+                         </>
+                       ) : statusQuery ? (
+                         <>
+                           <span className="text-purple-500">{statusQuery}</span> animelar ro'yxati
                          </>
                        ) : (
                          <>

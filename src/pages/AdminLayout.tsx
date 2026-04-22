@@ -33,14 +33,9 @@ export default function AdminLayout() {
     { name: "Animelar Ro'yxati", path: "/admin/animes", icon: Film },
     { name: "Epizodlar", path: "/admin/episodes", icon: Video },
     { name: "Yordam", path: "/admin/support", icon: MessageSquare },
+    { name: "Adminlar & Userlar", path: "/admin/users", icon: Users },
+    { name: "Sozlamalar", path: "/admin/settings", icon: Settings },
   ];
-
-  // Add Users only if Super Admin
-  if (authUser?.isSuperAdmin) {
-    menuItems.push({ name: "Foydalanuvchilar", path: "/admin/users", icon: Users });
-  }
-
-  menuItems.push({ name: "Sozlamalar", path: "/admin/settings", icon: Settings });
 
   const isActive = (path: string) => location.pathname === path || location.pathname === path + '/';
 
