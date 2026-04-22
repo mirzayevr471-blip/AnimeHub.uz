@@ -36,7 +36,12 @@ export default function GlobalChat() {
     window.addEventListener('open-global-chat', handleOpenChat);
 
     // Initialize socket connection
-    socketRef.current = io('/', { path: '/socket.io' });
+    socketRef.current = io(window.location.origin, { 
+      path: '/socket.io',
+      transports: ['websocket', 'polling'],
+      secure: true,
+      rejectUnauthorized: false
+    });
 
     socketRef.current.on('connect', () => {
       setIsConnected(true);
@@ -106,10 +111,10 @@ export default function GlobalChat() {
             animate={{ scale: 1 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="w-14 h-14 bg-indigo-600 hover:bg-indigo-700 rounded-full flex items-center justify-center text-white shadow-2xl shadow-indigo-600/30 transition-colors relative group"
+            className="w-14 h-14 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center text-white shadow-2xl shadow-blue-600/30 transition-colors relative group"
           >
             <MessageSquare className="w-6 h-6 z-10" />
-            <div className="absolute inset-0 bg-indigo-500 rounded-full blur-[2px] opacity-0 group-hover:opacity-40 transition-opacity" />
+            <div className="absolute inset-0 bg-blue-500 rounded-full blur-[2px] opacity-0 group-hover:opacity-40 transition-opacity" />
             {hasUnread && (
               <span className="absolute top-0 right-0 w-4 h-4 bg-rose-500 rounded-full border-2 border-[#0a0a0c] shadow-lg animate-pulse" />
             )}
@@ -123,21 +128,21 @@ export default function GlobalChat() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 50, scale: 0.9 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              className="absolute bottom-0 left-0 w-[350px] sm:w-[400px] bg-[#0a0a0c] border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh] h-[600px] shadow-indigo-900/20"
+              className="absolute bottom-0 left-0 w-[350px] sm:w-[400px] bg-[#0a0a0c] border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh] h-[600px] shadow-blue-900/20"
             >
               {/* Header */}
-              <div className="p-4 bg-gradient-to-r from-purple-900/40 to-indigo-900/40 border-b border-white/10 flex items-center justify-between">
+              <div className="p-4 bg-gradient-to-r from-blue-900/40 to-blue-800/40 border-b border-white/10 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="flex -space-x-2">
-                    <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center border-2 border-[#0a0a0c] z-10">
+                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center border-2 border-[#0a0a0c] z-10">
                       <MessageSquare className="w-4 h-4 text-white" />
                     </div>
                   </div>
                   <div>
                     <h3 className="font-bold text-sm leading-tight text-white">Global Chat</h3>
                     <div className="flex items-center gap-1.5">
-                      <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
-                      <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+                      <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500 animate-pulse'}`} />
+                      <span className={`text-[10px] font-black uppercase tracking-widest ${isConnected ? 'text-gray-400' : 'text-rose-400'}`}>
                         {isConnected ? 'Onlayn' : 'Ulanmoqda...'}
                       </span>
                     </div>
@@ -174,11 +179,11 @@ export default function GlobalChat() {
                           <div className="flex items-center gap-2 mb-1.5 ml-1">
                             <span className="text-[10px] font-bold text-gray-400">{msg.name}</span>
                             {isSystemAdmin ? (
-                              <span className="text-[8px] font-black tracking-widest uppercase bg-purple-600/20 text-purple-400 px-1.5 py-0.5 rounded border border-purple-500/20">
+                              <span className="text-[8px] font-black tracking-widest uppercase bg-blue-600/20 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/20">
                                 Super Admin
                               </span>
                             ) : msg.role === 'admin' ? (
-                              <span className="text-[8px] font-black tracking-widest uppercase bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/20">
+                              <span className="text-[8px] font-black tracking-widest uppercase bg-sky-500/20 text-sky-400 px-1.5 py-0.5 rounded border border-sky-500/20">
                                 Admin
                               </span>
                             ) : null}
@@ -194,9 +199,9 @@ export default function GlobalChat() {
                           <div className={`group relative flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                             <div className={`px-4 py-2.5 rounded-2xl text-sm ${
                               isMe 
-                                ? 'bg-purple-600 text-white rounded-br-sm' 
+                                ? 'bg-blue-600 text-white rounded-br-sm' 
                                 : isSystemAdmin
-                                  ? 'bg-gradient-to-r from-purple-900/60 to-indigo-900/60 border border-purple-500/20 text-white rounded-bl-sm'
+                                  ? 'bg-gradient-to-r from-blue-900/60 to-blue-800/60 border border-blue-500/20 text-white rounded-bl-sm'
                                   : 'bg-white/10 text-gray-200 rounded-bl-sm border border-white/5'
                             }`}>
                               {msg.text}
@@ -224,13 +229,13 @@ export default function GlobalChat() {
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       placeholder="Xabar yozing..."
-                      className="w-full bg-[#0a0a0c] border border-white/10 rounded-2xl py-3 pl-4 pr-12 text-sm text-white focus:outline-none focus:border-purple-500 transition-colors"
+                      className="w-full bg-[#0a0a0c] border border-white/10 rounded-2xl py-3 pl-4 pr-12 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
                       maxLength={500}
                     />
                     <button
                       type="submit"
                       disabled={!newMessage.trim()}
-                      className="absolute right-2 p-2 bg-purple-600 hover:bg-purple-700 disabled:bg-white/5 disabled:text-gray-500 text-white rounded-xl transition-colors"
+                      className="absolute right-2 p-2 bg-blue-600 hover:bg-blue-700 disabled:bg-white/5 disabled:text-gray-500 text-white rounded-xl transition-colors"
                     >
                       <Send className="w-4 h-4" />
                     </button>
@@ -238,7 +243,7 @@ export default function GlobalChat() {
                 ) : (
                   <div className="bg-[#0a0a0c] border border-dashed border-white/10 rounded-xl p-4 text-center">
                     <p className="text-xs text-gray-400 font-medium font-bold mb-2">Chatda qatnashish uchun tizimga kiring</p>
-                    <a href="/login" className="text-[10px] font-black uppercase tracking-widest text-purple-400 hover:text-purple-300 transition-colors">
+                    <a href="/login" className="text-[10px] font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors">
                       Kirish
                     </a>
                   </div>

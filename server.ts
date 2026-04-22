@@ -148,7 +148,7 @@ async function startServer() {
         const isSuperAdmin = payload.email === 'eyfelchik@gmail.com';
         const isAdmin = isSuperAdmin || payload.email === 'mirzayevr471@gmail.com';
         
-        const superAdminAvatar = "https://image.spreadshirtmedia.net/image-server/v1/compositions/T812A2PA3811PT17X46Y41D1037385934W21927H21927/views/1,width=550,height=550,appearanceId=2,backgroundColor=000000/cute-anime-boy-poster.jpg";
+        const superAdminAvatar = "anime_profile_avatar_image_2.png";
         
         const user = {
           id: payload.sub,

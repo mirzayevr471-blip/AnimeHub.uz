@@ -8,7 +8,7 @@ interface SettingsContextType {
 }
 
 const DEFAULT_SETTINGS: SiteSettings = {
-  siteName: 'AniHub',
+  siteName: 'AnimeHub.uz',
   siteDescription: "O'zbekistondagi eng yirik anime portali. Eng so'nggi va eng mashhur animelarni yuqori sifatli subtitrlar va dublyaj bilan tomosha qiling.",
   contactEmail: 'admin@anihub.uz',
   socialLinks: {

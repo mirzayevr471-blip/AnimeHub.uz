@@ -1,7 +1,7 @@
 # Project Rules & Design Guidelines
 
 ## App Identity
-- **Name:** AniHub
+- **Name:** AnimeHub.uz
 - **Description:** A modern, high-performance anime streaming platform tailored for Uzbek fans.
 - **Theme:** Strict **Blue Template**. 
   - Primary Color: Blue (`#2563EB`)

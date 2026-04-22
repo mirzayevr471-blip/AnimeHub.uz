@@ -75,10 +75,13 @@ const Header = () => {
         
         {/* Logo */}
         <div className="flex-shrink-0 flex items-center gap-8">
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="text-2xl font-black italic tracking-tighter">
-              <span className="text-blue-500">Ani</span>Hub
-            </div>
+          <Link to="/" className="flex items-center gap-3 group">
+            <img 
+              src="animehub_uz_logo_image_1.png" 
+              alt="AnimeHub.uz" 
+              className="h-10 w-auto group-hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_12px_rgba(37,99,235,0.3)]"
+              referrerPolicy="no-referrer"
+            />
           </Link>
           
           {/* Desktop Nav */}

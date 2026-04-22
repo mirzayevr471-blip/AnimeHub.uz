@@ -9,10 +9,13 @@ const Footer = () => {
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="col-span-1 md:col-span-2">
-             <a href="/" className="flex items-center gap-2 group mb-4">
-              <div className="text-2xl font-black italic tracking-tighter">
-                <span className="text-blue-500">{settings.siteName.slice(0, 3)}</span>{settings.siteName.slice(3)}
-              </div>
+             <a href="/" className="flex items-center gap-3 group mb-4">
+               <img 
+                 src="animehub_uz_logo_image_1.png" 
+                 alt="AnimeHub.uz" 
+                 className="h-8 w-auto group-hover:scale-105 transition-transform duration-300"
+                 referrerPolicy="no-referrer"
+               />
             </a>
             <p className="text-gray-400 text-sm leading-relaxed max-w-sm mb-6">
               {settings.siteDescription}
