@@ -18,7 +18,9 @@ import {
   Eye,
   Info,
   CheckCircle2,
-  Copy
+  Copy,
+  X,
+  Send
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Episode } from '../types';
@@ -36,6 +38,7 @@ export default function Watch() {
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [userRating, setUserRating] = useState<number | null>(0); // Initial user rating set to 0
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' } | null>(null);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   const anime = useMemo(() => animes.find(a => a.id === animeId), [animes, animeId]);
 
@@ -67,23 +70,21 @@ export default function Watch() {
     }
   };
 
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: anime?.title,
-          text: `${anime?.title} - AniHub Uz orqali tomosha qiling!`,
-          url: window.location.href,
-        });
-      } catch (err) {
-        // Fallback to copy if user cancels or error
-        navigator.clipboard.writeText(window.location.href);
-        showToast("Havola nusxalandi!", 'info');
-      }
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      showToast("Havola nusxalandi!", 'info');
-    }
+  const handleShare = () => {
+    setIsShareModalOpen(true);
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    showToast("Havola nusxalandi!", 'info');
+    setIsShareModalOpen(false);
+  };
+
+  const handleTelegramShare = () => {
+    const url = window.location.href;
+    const text = `${anime?.title} - AniHub Uz orqali tomosha qiling!`;
+    window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+    setIsShareModalOpen(false);
   };
 
   const handleWatchLater = () => {
@@ -164,6 +165,59 @@ export default function Watch() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#070708]/40 via-[#070708]/80 to-[#070708]" />
       </div>
+
+      {/* Share Modal */}
+      <AnimatePresence>
+        {isShareModalOpen && (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsShareModalOpen(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0, y: 10 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 10 }}
+              className="relative bg-[#1a1a1a] p-6 lg:p-7 rounded-[28px] max-w-md w-full shadow-2xl space-y-5"
+            >
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl lg:text-2xl font-bold tracking-tight text-white">Ulashish</h3>
+                <button 
+                  onClick={() => setIsShareModalOpen(false)}
+                  className="rounded-full p-1.5 border-2 border-white/20 hover:bg-white/10 hover:border-white/40 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="bg-black/80 rounded-2xl p-4 font-mono text-sm text-gray-400 break-all select-all">
+                {window.location.href}
+              </div>
+
+              <div className="space-y-3">
+                <button 
+                  onClick={handleCopyLink}
+                  className="w-full flex items-center gap-4 bg-[#2a2a2a] hover:bg-[#333] text-white p-4 rounded-2xl transition-colors font-medium text-sm lg:text-base"
+                >
+                  <Copy className="w-5 h-5 text-gray-300" />
+                  Havolani nusxalash
+                </button>
+
+                <button 
+                  onClick={handleTelegramShare}
+                  className="w-full flex items-center gap-4 bg-[#2563eb] hover:bg-blue-600 text-white p-4 rounded-2xl transition-colors font-medium text-sm lg:text-base"
+                >
+                  <Send className="w-5 h-5" />
+                  Telegram orqali ulashish
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Rating Modal */}
       <AnimatePresence>

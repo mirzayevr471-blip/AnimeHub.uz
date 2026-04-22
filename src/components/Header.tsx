@@ -1,19 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Globe, Menu, X, Bell, ChevronLeft, User, LogIn, UserPlus, ShieldCheck, MessageSquare } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Search, Globe, Menu, X, Bell, ChevronLeft, User, LogIn, UserPlus, ShieldCheck, MessageSquare, Megaphone, CheckCircle2, AlertTriangle, Info } from 'lucide-react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useAnnouncements } from '../context/AnnouncementContext';
+import { motion, AnimatePresence } from 'motion/react';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [lang, setLang] = useState('UZ');
+  const [showNotifications, setShowNotifications] = useState(false);
+  const notifRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
+  const { announcements } = useAnnouncements();
 
   useEffect(() => {
     setSearchValue(searchParams.get('q') || '');
   }, [searchParams]);
+
+  useEffect(() => {
+    // Close notifications when clicking outside
+    const handleClickOutside = (event: MouseEvent) => {
+      if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,6 +42,31 @@ const Header = () => {
 
   const toggleLang = () => {
     setLang(prev => prev === 'UZ' ? 'EN' : 'UZ');
+  };
+
+  // Use announcements as notifications
+  const activeNotifications = announcements.slice(0, 5); // Limit to top 5
+  // Red dot indicator based on having active announcements
+  const hasUnread = activeNotifications.some(a => a.isActive);
+
+  const getTypeStyles = (type: string) => {
+    switch(type) {
+      case 'warning': return 'text-yellow-500 bg-yellow-500/10';
+      case 'danger': return 'text-rose-500 bg-rose-500/10';
+      case 'success': return 'text-emerald-500 bg-emerald-500/10';
+      case 'info':
+      default: return 'text-blue-400 bg-blue-500/10';
+    }
+  };
+
+  const getIcon = (type: string, className = "w-4 h-4") => {
+    switch(type) {
+      case 'warning': return <AlertTriangle className={className} />;
+      case 'danger': return <AlertTriangle className={className} />;
+      case 'success': return <CheckCircle2 className={className} />;
+      case 'info':
+      default: return <Info className={className} />;
+    }
   };
 
   return (
@@ -81,15 +122,83 @@ const Header = () => {
             </button>
           </form>
           
-          {/* Mobile search toggle would go here if needed, but let's keep it simple */}
+          {/* Header Action Icons */}
+          <div className="flex items-center gap-1 sm:gap-2 mr-2">
+            {/* Notification Bell */}
+            <div className="relative" ref={notifRef}>
+              <button 
+                onClick={() => setShowNotifications(!showNotifications)}
+                className={`relative p-2 rounded-full transition-colors focus:outline-none flex items-center justify-center bg-[#111] sm:bg-transparent ${showNotifications ? 'bg-white/10' : 'hover:bg-white/10'}`}
+              >
+                <Bell className="w-5 h-5 text-gray-400" />
+                {hasUnread && (
+                  <div className="absolute top-1 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-[#111] animate-pulse"></div>
+                )}
+              </button>
 
-          {/* Lang */}
-          <div 
-            onClick={toggleLang}
-            className="hidden sm:flex items-center gap-2 text-sm bg-white/5 px-3 py-1.5 rounded-md cursor-pointer hover:bg-white/10 transition-colors border border-transparent hover:border-white/10"
-          >
-            <span className="text-xs opacity-60 text-white">{lang}</span>
-            <span className="text-white">{lang === 'UZ' ? 'O‘zbekcha' : 'English'}</span>
+              {/* Notifications Dropdown */}
+              <AnimatePresence>
+                {showNotifications && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute top-full right-0 mt-4 w-80 sm:w-96 bg-[#111] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-[100]"
+                  >
+                    <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between bg-black/40">
+                      <h3 className="font-bold text-white tracking-tight">Bildirishnomalar</h3>
+                      <button 
+                        onClick={() => setShowNotifications(false)}
+                        className="text-gray-500 hover:text-white transition-colors p-1"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="max-h-[400px] overflow-y-auto">
+                      {activeNotifications.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+                          <Bell className="w-10 h-10 text-gray-700 mb-3" />
+                          <p className="text-sm font-medium text-gray-500">Hozircha yangi xabarlar yo'q.</p>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col divide-y divide-white/5">
+                          {activeNotifications.map((notif) => (
+                            <div key={notif.id} className="p-4 hover:bg-white/5 transition-colors cursor-default relative">
+                              {!notif.isActive && (
+                                <div className="absolute top-4 right-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest border border-gray-700 px-2 py-0.5 rounded">Eski</div>
+                              )}
+                              <div className="flex gap-4">
+                                <div className={`mt-1 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${getTypeStyles(notif.type)}`}>
+                                  {getIcon(notif.type)}
+                                </div>
+                                <div className="flex-1 space-y-1">
+                                  <h4 className="text-sm font-bold text-gray-200 line-clamp-1">{notif.title}</h4>
+                                  <p className="text-xs text-gray-400 font-medium line-clamp-2 leading-relaxed">{notif.message}</p>
+                                  <p className="text-[10px] text-gray-600 font-bold uppercase tracking-widest pt-1">
+                                    {new Date(notif.createdAt).toLocaleDateString()}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+            
+            {/* Lang */}
+            <div 
+              onClick={toggleLang}
+              className="hidden sm:flex items-center gap-2 text-sm bg-white/5 px-3 py-1.5 rounded-md cursor-pointer hover:bg-white/10 transition-colors border border-transparent hover:border-white/10"
+            >
+              <span className="text-xs opacity-60 text-white">{lang}</span>
+              <span className="text-white">{lang === 'UZ' ? 'O‘zbekcha' : 'English'}</span>
+            </div>
           </div>
 
           {user?.role === 'admin' && (

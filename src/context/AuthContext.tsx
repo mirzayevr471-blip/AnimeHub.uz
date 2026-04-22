@@ -26,8 +26,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const response = await fetch('/api/auth/me');
         const data = await response.json();
         if (data.user) {
-          setUser(data.user);
-          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(data.user));
+          // Sync with USERS_KEY for admin panel visibility
+          const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+          const existingIdx = users.findIndex((u: any) => u.email === data.user.email);
+          
+          let finalUser = { ...data.user };
+          if (existingIdx >= 0) {
+            // Preserve role and local stats from storage
+            finalUser = { ...finalUser, ...users[existingIdx], role: users[existingIdx].role, isSuperAdmin: users[existingIdx].isSuperAdmin || data.user.isSuperAdmin };
+            users[existingIdx] = finalUser;
+          } else {
+            users.push(finalUser);
+          }
+          localStorage.setItem(USERS_KEY, JSON.stringify(users));
+          
+          setUser(finalUser);
+          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(finalUser));
         } else {
           // Fallback to local storage if server session is empty
           const savedUser = localStorage.getItem(CURRENT_USER_KEY);
@@ -57,8 +71,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .then(res => res.json())
           .then(data => {
             if (data.user) {
-              setUser(data.user);
-              localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(data.user));
+              const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+              const existingIdx = users.findIndex((u: any) => u.email === data.user.email);
+              
+              let finalUser = { ...data.user };
+              if (existingIdx >= 0) {
+                // Preserve role from storage
+                finalUser = { ...finalUser, ...users[existingIdx], role: users[existingIdx].role, isSuperAdmin: users[existingIdx].isSuperAdmin || data.user.isSuperAdmin };
+                users[existingIdx] = finalUser;
+              } else {
+                users.push(finalUser);
+              }
+              localStorage.setItem(USERS_KEY, JSON.stringify(users));
+              
+              setUser(finalUser);
+              localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(finalUser));
             }
           });
       }

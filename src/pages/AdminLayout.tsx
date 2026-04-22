@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Film, Settings, LogOut, Bell, Search, Menu, X, User, ChevronRight, Zap, Video, MessageSquare, Users } from 'lucide-react';
+import { LayoutDashboard, Film, Settings, LogOut, Bell, Search, Menu, X, User, ChevronRight, Zap, Video, MessageSquare, Users, Megaphone } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -33,6 +33,7 @@ export default function AdminLayout() {
     { name: "Animelar Ro'yxati", path: "/admin/animes", icon: Film },
     { name: "Epizodlar", path: "/admin/episodes", icon: Video },
     { name: "Yordam", path: "/admin/support", icon: MessageSquare },
+    { name: "E'lonlar", path: "/admin/announcements", icon: Megaphone },
     { name: "Adminlar & Userlar", path: "/admin/users", icon: Users },
     { name: "Sozlamalar", path: "/admin/settings", icon: Settings },
   ];

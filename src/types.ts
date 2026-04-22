@@ -84,3 +84,13 @@ export interface SiteSettings {
   socialLinks: SocialLinks;
   contactEmail: string;
 }
+
+export interface Announcement {
+  id: string;
+  title: string;
+  message: string;
+  link?: string;
+  type: 'info' | 'warning' | 'success' | 'danger';
+  isActive: boolean;
+  createdAt: string;
+}
