@@ -4,6 +4,7 @@ import { useAnime } from '../context/AnimeContext';
 import { ChevronLeft, Plus, Trash2, Video, List, Calendar, Hash, Type, Loader2, Check, Play, Image as ImageIcon, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Episode } from '../types';
+import { getVideoEmbedUrl } from '../utils';
 
 export default function AdminEpisodes() {
   const { animeId } = useParams();
@@ -386,7 +387,7 @@ export default function AdminEpisodes() {
               </div>
               
               <iframe 
-                src={playingEpisode.videoUrl}
+                src={getVideoEmbedUrl(playingEpisode.videoUrl)}
                 className="w-full h-full"
                 allowFullScreen
                 title={playingEpisode.title}

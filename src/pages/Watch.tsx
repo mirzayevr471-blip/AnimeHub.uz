@@ -25,6 +25,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { Episode } from '../types';
 import { useUser } from '../context/UserContext';
+import { getVideoEmbedUrl } from '../utils';
 
 export default function Watch() {
   const { animeId } = useParams();
@@ -287,7 +288,7 @@ export default function Watch() {
                 <div className={`aspect-video bg-black rounded-[24px] overflow-hidden border border-white/5 shadow-2xl relative ${isCinemaMode ? 'rounded-none border-none' : ''}`}>
                   {activeEpisode ? (
                     <iframe 
-                      src={activeEpisode.videoUrl}
+                      src={getVideoEmbedUrl(activeEpisode.videoUrl)}
                       className="w-full h-full border-none"
                       allowFullScreen
                       title={`${anime.title} - ${activeEpisode.number}-qism`}
