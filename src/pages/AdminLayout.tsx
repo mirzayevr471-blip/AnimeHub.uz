@@ -31,7 +31,7 @@ export default function AdminLayout() {
   const menuItems = [
     { name: "Dashboard", path: "/admin", icon: LayoutDashboard },
     { name: "Animelar Ro'yxati", path: "/admin/animes", icon: Film },
-    { name: "Epizodlar", path: "/admin/episodes", icon: Video },
+    { name: "Qismlar", path: "/admin/episodes", icon: Video },
     { name: "Yordam", path: "/admin/support", icon: MessageSquare },
     { name: "E'lonlar", path: "/admin/announcements", icon: Megaphone },
     { name: "Adminlar & Userlar", path: "/admin/users", icon: Users },
@@ -50,11 +50,14 @@ export default function AdminLayout() {
           {/* Logo Area */}
           <div className="h-20 flex items-center px-6 border-b border-white/5 overflow-hidden">
             <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-gradient-to-tr from-blue-600 to-blue-400 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/20 group-hover:rotate-12 transition-transform duration-500">
-                <Zap className="w-6 h-6 text-white fill-white" />
-              </div>
+              <img 
+                src="input_file_0.png" 
+                alt="AnimeHub.uz" 
+                className="w-10 h-10 rounded-xl object-cover shadow-lg shadow-blue-500/40 group-hover:rotate-6 transition-transform duration-500 border border-blue-500/30"
+                referrerPolicy="no-referrer"
+              />
               <span className={`text-xl font-black tracking-tighter transition-all duration-500 ${isSidebarOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
-                ANI<span className="text-blue-500">HUB</span>
+                ANIME<span className="text-blue-500">HUB</span>
                 <span className="text-[10px] ml-1 text-gray-500 font-bold border border-white/10 px-1 rounded uppercase">Pro</span>
               </span>
             </Link>
@@ -101,7 +104,7 @@ export default function AdminLayout() {
             <div className={`flex items-center gap-4 bg-white/5 p-3 rounded-2xl border border-white/5 transition-all ${isSidebarOpen ? 'w-full' : 'w-12 px-2 overflow-hidden'}`}>
               <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-blue-400 flex items-center justify-center font-black text-xs shadow-lg flex-shrink-0">
                 {authUser?.avatar ? (
-                   <img src={authUser.avatar} alt="Admin" className="w-full h-full object-cover rounded-xl" />
+                   <img src={authUser.avatar} alt="Admin" className="w-full h-full object-cover rounded-xl" referrerPolicy="no-referrer" />
                 ) : (
                    'AD'
                 )}

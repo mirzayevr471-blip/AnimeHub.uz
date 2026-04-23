@@ -97,7 +97,7 @@ export default function AdminAddAnime() {
           </button>
           <div>
             <h2 className="text-3xl font-black tracking-tight flex items-center gap-3">
-              Yangi Anime <span className="text-purple-500">Qo'shish</span>
+              Yangi Anime <span className="text-blue-500">Qo'shish</span>
             </h2>
             <p className="text-gray-400 text-sm mt-1">Platformaga yangi kontent qo'shish jarayoni.</p>
           </div>
@@ -129,9 +129,9 @@ export default function AdminAddAnime() {
                 </div>
               )}
             </div>
-            <div className="bg-purple-500/10 border border-purple-500/20 p-4 rounded-2xl flex gap-3">
-              <Info className="w-5 h-5 text-purple-500 flex-shrink-0 mt-0.5" />
-              <p className="text-[10px] text-purple-300 font-medium leading-relaxed">
+            <div className="bg-blue-500/10 border border-blue-500/20 p-4 rounded-2xl flex gap-3">
+              <Info className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+              <p className="text-[10px] text-blue-300 font-medium leading-relaxed">
                 Optimal poster o'lchami: 600x800px. URL manzili rasm formatida (.jpg, .png) bo'lishi kerak.
               </p>
             </div>
@@ -201,7 +201,7 @@ export default function AdminAddAnime() {
                 <select 
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-purple-500 transition-all font-medium text-white appearance-none cursor-pointer"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-blue-500 transition-all font-medium text-white appearance-none cursor-pointer"
                 >
                   {types.map(t => <option key={t} value={t} className="bg-[#0a0a0c]">{t}</option>)}
                 </select>
@@ -213,7 +213,7 @@ export default function AdminAddAnime() {
                 <select 
                   value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-purple-500 transition-all font-medium text-white appearance-none cursor-pointer"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-blue-500 transition-all font-medium text-white appearance-none cursor-pointer"
                 >
                   {statuses.map(s => <option key={s.value} value={s.value} className="bg-[#0a0a0c]">{s.label}</option>)}
                 </select>
@@ -243,7 +243,7 @@ export default function AdminAddAnime() {
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.8 }}
                           key={genre}
-                          className="bg-purple-600/20 text-purple-400 border border-purple-500/30 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 group"
+                          className="bg-blue-600/20 text-blue-400 border border-blue-500/30 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 group"
                         >
                           {genre}
                           <button 
@@ -266,12 +266,12 @@ export default function AdminAddAnime() {
 
             <div className="pt-6 border-t border-white/5 flex justify-end gap-4 items-center">
               <label className="flex items-center gap-2 text-sm text-gray-400 font-bold cursor-pointer group mr-auto">
-                <input 
-                  type="checkbox"
-                  checked={sendToTelegram}
-                  onChange={(e) => setSendToTelegram(e.target.checked)}
-                  className="rounded bg-[#0a0a0c] border-white/20 text-purple-500 focus:ring-purple-500 focus:ring-offset-0 focus:ring-offset-[#070708]"
-                />
+                  <input 
+                    type="checkbox"
+                    checked={sendToTelegram}
+                    onChange={(e) => setSendToTelegram(e.target.checked)}
+                    className="rounded bg-[#0a0a0c] border-white/20 text-blue-500 focus:ring-blue-500 focus:ring-offset-0 focus:ring-offset-[#070708]"
+                  />
                 <span className="group-hover:text-white transition-colors">Telegram kanalga yuborish</span>
               </label>
 
@@ -288,7 +288,7 @@ export default function AdminAddAnime() {
                 className={`px-10 py-4 rounded-2xl font-bold text-sm transition-all shadow-xl flex items-center gap-3 active:scale-95 ${
                   success 
                     ? 'bg-emerald-600 text-white shadow-emerald-900/20' 
-                    : 'bg-purple-600 hover:bg-purple-700 text-white shadow-purple-900/30'
+                    : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-900/30'
                 }`}
               >
                 {loading ? (

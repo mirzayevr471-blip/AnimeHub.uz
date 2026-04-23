@@ -1,6 +1,7 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAnime } from '../context/AnimeContext';
-import { Film, PlayCircle, Star, Users, TrendingUp, Calendar, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Film, PlayCircle, Star, Users, TrendingUp, Calendar, ArrowUpRight, ArrowDownRight, Video } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   AreaChart, Area, Cell, PieChart, Pie
@@ -8,14 +9,15 @@ import {
 
 export default function AdminDashboard() {
   const { animes } = useAnime();
+  const navigate = useNavigate();
 
   const stats = [
     { 
       title: "Jami Animelar", 
       value: animes.length.toString(), 
       icon: Film, 
-      color: "text-purple-500", 
-      bg: "bg-purple-500/10",
+      color: "text-blue-500", 
+      bg: "bg-blue-500/10",
       trend: "+12%",
       trendUp: true
     },
@@ -57,7 +59,7 @@ export default function AdminDashboard() {
   ).map(([year, count]) => ({ year, count })).sort((a, b) => Number(a.year) - Number(b.year));
 
   const statusData = [
-    { name: 'Ongoing', value: animes.filter(a => a.status === 'Davom etayotgan').length, color: '#9333ea' },
+    { name: 'Ongoing', value: animes.filter(a => a.status === 'Davom etayotgan').length, color: '#2563eb' },
     { name: 'Completed', value: animes.filter(a => a.status === 'Tugallangan').length, color: '#3b82f6' },
   ];
 
@@ -98,7 +100,7 @@ export default function AdminDashboard() {
           </div>
           <button 
             onClick={downloadReport}
-            className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-lg shadow-purple-900/20 flex items-center gap-2 active:scale-95"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-lg shadow-blue-900/20 flex items-center gap-2 active:scale-95"
           >
             <TrendingUp className="w-4 h-4" />
             Hisobot Yuklash
@@ -109,7 +111,7 @@ export default function AdminDashboard() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, i) => (
-          <div key={i} className="bg-[#0a0a0c] p-6 rounded-2xl border border-white/5 relative overflow-hidden group hover:border-purple-500/30 transition-all duration-500">
+          <div key={i} className="bg-[#0a0a0c] p-6 rounded-2xl border border-white/5 relative overflow-hidden group hover:border-blue-500/30 transition-all duration-500">
             <div className="flex justify-between items-start mb-4">
               <div className={`p-3 rounded-2xl ${stat.bg} group-hover:scale-110 transition-transform duration-500`}>
                 <stat.icon className={`w-6 h-6 ${stat.color}`} />
@@ -119,11 +121,11 @@ export default function AdminDashboard() {
                 {stat.trend}
               </div>
             </div>
-            <h3 className="text-3xl font-black mb-1 group-hover:text-purple-400 transition-colors">{stat.value}</h3>
+            <h3 className="text-3xl font-black mb-1 group-hover:text-blue-400 transition-colors">{stat.value}</h3>
             <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">{stat.title}</p>
             
             {/* Subtle background glow on hover */}
-            <div className="absolute -bottom-10 -right-10 w-24 h-24 bg-purple-600/5 blur-3xl rounded-full group-hover:bg-purple-600/10 transition-colors"></div>
+            <div className="absolute -bottom-10 -right-10 w-24 h-24 bg-blue-600/5 blur-3xl rounded-full group-hover:bg-blue-600/10 transition-colors"></div>
           </div>
         ))}
       </div>
@@ -146,8 +148,8 @@ export default function AdminDashboard() {
               <AreaChart data={yearData}>
                 <defs>
                   <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#9333ea" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#9333ea" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#2563eb" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff05" />
@@ -155,9 +157,9 @@ export default function AdminDashboard() {
                 <YAxis stroke="#4b5563" fontSize={12} tickLine={false} axisLine={false} />
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#0a0a0c', border: '1px solid #1f2937', borderRadius: '12px', fontSize: '12px' }}
-                  itemStyle={{ color: '#9333ea' }}
+                  itemStyle={{ color: '#2563eb' }}
                 />
-                <Area type="monotone" dataKey="count" stroke="#9333ea" strokeWidth={3} fillOpacity={1} fill="url(#colorCount)" />
+                <Area type="monotone" dataKey="count" stroke="#2563eb" strokeWidth={3} fillOpacity={1} fill="url(#colorCount)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -208,7 +210,7 @@ export default function AdminDashboard() {
       <div className="bg-[#0a0a0c] rounded-3xl border border-white/5 overflow-hidden shadow-2xl">
         <div className="p-6 border-b border-white/5 flex items-center justify-between">
           <h3 className="font-bold">Oxirgi Yangilanganlar</h3>
-          <button className="text-xs text-purple-400 hover:text-purple-300 font-bold uppercase tracking-widest">Barchasi</button>
+          <button className="text-xs text-blue-400 hover:text-blue-300 font-bold uppercase tracking-widest">Barchasi</button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left">
@@ -217,7 +219,7 @@ export default function AdminDashboard() {
                 <th className="px-6 py-3">Anime</th>
                 <th className="px-6 py-3">Rating</th>
                 <th className="px-6 py-3">Status</th>
-                <th className="px-6 py-3">Type</th>
+                <th className="px-6 py-3">Amallar</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/[0.02]">
@@ -237,12 +239,18 @@ export default function AdminDashboard() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-tighter ${anime.status === 'Tugallangan' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' : 'bg-purple-500/10 text-purple-500 border border-purple-500/20'}`}>
+                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-tighter ${anime.status === 'Tugallangan' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' : 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'}`}>
                       {anime.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-xs font-medium text-gray-400">
-                    {anime.type}
+                  <td className="px-6 py-4">
+                    <button 
+                      onClick={() => navigate(`/admin/animes/${anime.id}/episodes`)}
+                      className="p-2 bg-white/5 hover:bg-blue-600/20 hover:text-blue-500 rounded-lg transition-all"
+                      title="Qismlarni boshqarish"
+                    >
+                      <Video className="w-4 h-4" />
+                    </button>
                   </td>
                 </tr>
               ))}

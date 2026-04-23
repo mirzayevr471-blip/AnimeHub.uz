@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAnime } from '../context/AnimeContext';
-import { Edit, Trash2, Plus, X, Search, Filter, ChevronRight, MoreHorizontal, Download, LayoutGrid, List, Star, Video } from 'lucide-react';
+import { Edit, Trash2, Plus, X, Search, Filter, ChevronRight, MoreHorizontal, Download, LayoutGrid, List, Star, Video, Image as ImageIcon } from 'lucide-react';
 import { Anime } from '../types';
 
 export default function AdminAnimes() {
@@ -319,22 +319,44 @@ export default function AdminAnimes() {
             <form onSubmit={handleSubmit} className="p-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-6">
+                  {/* Image Preview */}
+                  <div className="aspect-[3/4] rounded-3xl bg-white/5 border border-white/10 overflow-hidden relative group">
+                    {formData.image ? (
+                      <img 
+                        src={formData.image} 
+                        alt="Preview" 
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1541562232579-512a21360020?q=80&w=2670&auto=format&fit=crop';
+                        }}
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-700">
+                        <ImageIcon className="w-10 h-10 mb-2" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Poster Yo'q</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-6">
                   <div>
                     <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Anime Sarlavhasi</label>
-                    <input required type="text" value={formData.title} onChange={e=>setFormData({...formData, title: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-blue-500 focus:outline-none transition-all placeholder:text-gray-700" placeholder="Anime nomini yozing..." />
+                    <input required type="text" value={formData.title} onChange={e=>setFormData({...formData, title: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-blue-500 focus:outline-none transition-all placeholder:text-gray-700 font-bold" placeholder="Anime nomini yozing..." />
                   </div>
                   <div>
                     <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Poster URL</label>
-                    <input required type="url" value={formData.image} onChange={e=>setFormData({...formData, image: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-blue-500 focus:outline-none transition-all placeholder:text-gray-700" placeholder="Poster manzilini kiriting..." />
+                    <input required type="url" value={formData.image} onChange={e=>setFormData({...formData, image: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-blue-500 focus:outline-none transition-all placeholder:text-gray-700 font-mono text-[10px]" placeholder="Poster manzilini kiriting..." />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Reyting</label>
-                      <input required type="number" step="0.1" value={formData.rating} onChange={e=>setFormData({...formData, rating: Number(e.target.value)})} className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-blue-500 focus:outline-none transition-all" />
+                      <input required type="number" step="0.1" value={formData.rating} onChange={e=>setFormData({...formData, rating: Number(e.target.value)})} className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-blue-500 focus:outline-none transition-all font-bold" />
                     </div>
                     <div>
                       <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Chiqish Yili</label>
-                      <input required type="number" value={formData.year} onChange={e=>setFormData({...formData, year: Number(e.target.value)})} className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-blue-500 focus:outline-none transition-all" />
+                      <input required type="number" value={formData.year} onChange={e=>setFormData({...formData, year: Number(e.target.value)})} className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-blue-500 focus:outline-none transition-all font-bold" />
                     </div>
                   </div>
                 </div>
@@ -376,7 +398,7 @@ export default function AdminAnimes() {
                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-8 py-4 rounded-2xl font-bold text-gray-400 hover:text-white transition-all">
                   Bekor Qilish
                 </button>
-                <button type="submit" className="px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-sm transition-all shadow-2xl shadow-blue-900/40">
+                <button type="submit" className="px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-sm transition-all shadow-2xl shadow-blue-900/40 active:scale-95">
                   {editingId ? 'Saqlash' : 'Qo\'shish'}
                 </button>
               </div>

@@ -38,17 +38,26 @@ export default function GlobalChat() {
     // Initialize socket connection
     socketRef.current = io(window.location.origin, { 
       path: '/socket.io',
-      transports: ['websocket', 'polling'],
+      transports: ['polling', 'websocket'], // Polling first for better compatibility in restricted environments
       secure: true,
-      rejectUnauthorized: false
+      rejectUnauthorized: false,
+      reconnectionAttempts: 5,
+      timeout: 10000
     });
 
     socketRef.current.on('connect', () => {
       setIsConnected(true);
+      console.log('Chat connected');
     });
 
-    socketRef.current.on('disconnect', () => {
+    socketRef.current.on('connect_error', (error) => {
+      console.warn('Chat connection error (expected in some dev environments):', error.message);
       setIsConnected(false);
+    });
+
+    socketRef.current.on('disconnect', (reason) => {
+      setIsConnected(false);
+      console.log('Chat disconnected:', reason);
     });
 
     socketRef.current.on('chat:history', (history: ChatMessage[]) => {
@@ -192,7 +201,7 @@ export default function GlobalChat() {
                         
                         <div className={`flex gap-2 max-w-[85%] ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
                           {showHeader && !isMe && (
-                            <img src={msg.avatar} alt={msg.name} className="w-8 h-8 rounded-full mt-auto mb-1 border border-white/5 flex-shrink-0" />
+                            <img src={msg.avatar} alt={msg.name} className="w-8 h-8 rounded-full mt-auto mb-1 border border-white/5 flex-shrink-0" referrerPolicy="no-referrer" />
                           )}
                           {!showHeader && !isMe && <div className="w-8 ml-2" />}
                           

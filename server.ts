@@ -71,11 +71,13 @@ async function startServer() {
     }
   }));
 
-  // Google OAuth Client
-  const googleClient = new OAuth2Client(
-    process.env.GOOGLE_CLIENT_ID,
-    process.env.GOOGLE_CLIENT_SECRET
-  );
+  // Helper to get Google OAuth Client with latest env variables
+  const getGoogleClient = () => {
+    return new OAuth2Client(
+       process.env.GOOGLE_CLIENT_ID,
+       process.env.GOOGLE_CLIENT_SECRET
+    );
+  };
 
   // API Routes
   app.get('/api/health', (req, res) => {
@@ -92,7 +94,7 @@ async function startServer() {
       return res.json({ url: `${origin}/auth/callback?code=mock_google_flow` });
     }
 
-    const authorizeUrl = googleClient.generateAuthUrl({
+    const authorizeUrl = getGoogleClient().generateAuthUrl({
       access_type: 'offline',
       scope: [
         'https://www.googleapis.com/auth/userinfo.profile',
@@ -128,14 +130,15 @@ async function startServer() {
         const origin = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
         const redirectUri = `${origin}/auth/callback`;
 
-        const { tokens } = await googleClient.getToken({
+        const client = getGoogleClient();
+        const { tokens } = await client.getToken({
           code: code as string,
           redirect_uri: redirectUri,
         });
 
-        googleClient.setCredentials(tokens);
+        client.setCredentials(tokens);
 
-        const ticket = await googleClient.verifyIdToken({
+        const ticket = await client.verifyIdToken({
           idToken: tokens.id_token!,
           audience: process.env.GOOGLE_CLIENT_ID,
         });
@@ -255,28 +258,39 @@ async function startServer() {
     }
   });
 
-  // 6. Telegram Keys Management
-  app.get('/api/admin/telegram/config', (req, res) => {
+  // 6. Environment Variables Management
+  app.get('/api/admin/env/config', (req, res) => {
     if (!(req.session as any).user) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
     res.json({ 
       botToken: process.env.TELEGRAM_BOT_TOKEN || '', 
-      channelId: process.env.TELEGRAM_CHANNEL_ID || '' 
+      channelId: process.env.TELEGRAM_CHANNEL_ID || '',
+      googleClientId: process.env.GOOGLE_CLIENT_ID || '',
+      googleClientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+      sessionSecret: process.env.SESSION_SECRET || ''
     });
   });
 
-  app.post('/api/admin/telegram/config', (req, res) => {
+  app.post('/api/admin/env/config', (req, res) => {
     if (!(req.session as any).user) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
-    const { botToken, channelId } = req.body;
+    const { botToken, channelId, googleClientId, googleClientSecret, sessionSecret } = req.body;
     
     // Process env update for current instance memory
     if (botToken !== undefined) process.env.TELEGRAM_BOT_TOKEN = botToken;
     if (channelId !== undefined) process.env.TELEGRAM_CHANNEL_ID = channelId;
+    if (googleClientId !== undefined) process.env.GOOGLE_CLIENT_ID = googleClientId;
+    if (googleClientSecret !== undefined) process.env.GOOGLE_CLIENT_SECRET = googleClientSecret;
+    if (sessionSecret !== undefined) process.env.SESSION_SECRET = sessionSecret;
     
     res.json({ status: 'ok' });
+  });
+
+  // API 404 Handler - MUST be after all API routes and before Vite middleware
+  app.all('/api/*', (req, res) => {
+    res.status(404).json({ error: `API route not found: ${req.method} ${req.url}` });
   });
 
   // Vite middleware for development

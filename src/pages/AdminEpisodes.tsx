@@ -244,6 +244,26 @@ export default function AdminEpisodes() {
               </div>
 
               <form onSubmit={handleAdd} className="p-8 space-y-6">
+                {/* Thumbnail Preview */}
+                <div className="bg-white/5 border border-white/10 rounded-[32px] p-2 overflow-hidden relative group aspect-video max-w-sm mx-auto mb-6">
+                  {formData.thumbnail || anime.image ? (
+                    <img 
+                      src={formData.thumbnail || anime.image} 
+                      alt="Thumbnail Preview" 
+                      className="w-full h-full object-cover rounded-[28px] transition-transform duration-700 group-hover:scale-110" 
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-700">
+                      <ImageIcon className="w-10 h-10 mb-2" />
+                      <span className="text-[10px] font-black uppercase tracking-widest">Rasm yo'q</span>
+                    </div>
+                  )}
+                  <div className="absolute bottom-4 right-4 bg-blue-600/90 text-white px-3 py-1 rounded-full text-[10px] font-black backdrop-blur-md">
+                     PREVIEW
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-2 gap-6">
                   <div>
                     <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-2">

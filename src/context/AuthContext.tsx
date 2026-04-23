@@ -34,6 +34,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const fetchUser = async () => {
       try {
         const response = await fetch('/api/auth/me');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
+        const contentType = response.headers.get("content-type");
+        if (!contentType || contentType.indexOf("application/json") === -1) {
+          const text = await response.text();
+          console.error("Non-JSON response from /api/auth/me:", text.substring(0, 100));
+          throw new Error("Server returned non-JSON response");
+        }
+
         const data = await response.json();
         if (data.user) {
           // Sync with USERS_KEY for admin panel visibility
@@ -82,7 +91,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (event.data?.type === 'OAUTH_AUTH_SUCCESS') {
         // Refresh user data after successful Google Login
         fetch('/api/auth/me')
-          .then(res => res.json())
+          .then(async res => {
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+            return res.json();
+          })
           .then(data => {
             if (data.user) {
               const users = getStoredUsers();
@@ -111,12 +123,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const loginWithGoogle = async () => {
     try {
       const response = await fetch('/api/auth/google/url');
-      const data = await response.json();
+      const contentType = response.headers.get("content-type");
       
-      if (!response.ok) {
-        throw new Error(data.error || 'Autentifikatsiya xatosi yuz berdi');
+      if (!response.ok || !contentType || contentType.indexOf("application/json") === -1) {
+        let errorMsg = 'Autentifikatsiya xatosi yuz berdi';
+        try {
+          const data = await response.json();
+          errorMsg = data.error || errorMsg;
+        } catch (e) {
+          // If not JSON, use default or status text
+          errorMsg = `Server error (${response.status})`;
+        }
+        throw new Error(errorMsg);
       }
 
+      const data = await response.json();
       const { url } = data;
       
       const width = 600;

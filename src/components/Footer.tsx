@@ -9,14 +9,17 @@ const Footer = () => {
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="col-span-1 md:col-span-2">
-             <a href="/" className="flex items-center gap-3 group mb-4">
+             <a href="/" className="flex items-center gap-2 group mb-4">
                <img 
-                 src="animehub_uz_logo_image_1.png" 
+                 src="input_file_0.png" 
                  alt="AnimeHub.uz" 
-                 className="h-8 w-auto group-hover:scale-105 transition-transform duration-300"
+                 className="w-9 h-9 rounded-lg object-cover shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform duration-300 border border-blue-500/20"
                  referrerPolicy="no-referrer"
                />
-            </a>
+               <span className="text-lg font-black italic tracking-tighter text-white">
+                 Anime<span className="text-blue-500">Hub</span>.uz
+               </span>
+             </a>
             <p className="text-gray-400 text-sm leading-relaxed max-w-sm mb-6">
               {settings.siteDescription}
             </p>
@@ -64,7 +67,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li><a href={`mailto:${settings.contactEmail}`} className="text-sm text-gray-400 hover:text-blue-400 transition-colors">Aloqa</a></li>
               <li><button onClick={() => alert('FAQ bo\'limi to\'ldirilmoqda. Savollaringiz bo\'lsa, Aloqa orqali murojaat qiling.')} className="text-sm text-gray-400 hover:text-blue-400 transition-colors text-left">FAQ</button></li>
-              <li><button onClick={() => alert('Maxfiylik siyosati: AniHub foydalanuvchi ma\'lumotlari xavfsizligini ta\'minlaydi.')} className="text-sm text-gray-400 hover:text-blue-400 transition-colors text-left">Maxfiylik siyosati</button></li>
+              <li><button onClick={() => alert('Maxfiylik siyosati: AnimeHub foydalanuvchi ma\'lumotlari xavfsizligini ta\'minlaydi.')} className="text-sm text-gray-400 hover:text-blue-400 transition-colors text-left">Maxfiylik siyosati</button></li>
               <li><button onClick={() => alert('Foydalanish shartlari: Saytdan foydalanishda odob-axloq qoidalariga amal qiling.')} className="text-sm text-gray-400 hover:text-blue-400 transition-colors text-left">Foydalanish shartlari</button></li>
             </ul>
           </div>

@@ -179,7 +179,7 @@ export default function AdminUsers() {
                     <div key={u.id} className="group flex items-center justify-between p-4 bg-white/5 hover:bg-white/[0.08] border border-white/5 rounded-3xl transition-all">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-2xl overflow-hidden border border-white/10">
-                          <img src={u.avatar} alt={u.name} className="w-full h-full object-cover" />
+                          <img src={u.avatar} alt={u.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                         </div>
                         <div>
                           <div className="flex items-center gap-2">

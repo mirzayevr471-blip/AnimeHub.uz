@@ -148,7 +148,7 @@ export default function Profile() {
               <div className="flex flex-col items-center text-center">
                 <div className="relative group">
                   <div className="w-32 h-32 rounded-[40px] p-1 bg-gradient-to-tr from-purple-600 via-blue-500 to-emerald-500 shadow-2xl shadow-purple-900/30">
-                    <img src={user.avatar} alt={user.name} className="w-full h-full object-cover rounded-[36px] bg-[#0a0a0c]" />
+                    <img src={user.avatar} alt={user.name} className="w-full h-full object-cover rounded-[36px] bg-[#0a0a0c]" referrerPolicy="no-referrer" />
                   </div>
                   
                   {/* Hidden Input for File Upload */}

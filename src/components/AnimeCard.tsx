@@ -114,7 +114,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, rank }) => {
                  <div className="absolute inset-0 bg-gradient-to-r from-blue-900/20 to-transparent opacity-50"></div>
                  <div className="flex gap-4 items-center relative z-10">
                    <div className="w-16 h-20 rounded-xl overflow-hidden shadow-lg border border-white/10 flex-shrink-0">
-                     <img src={anime.image} alt={anime.title} className="w-full h-full object-cover" />
+                     <img src={anime.image} alt={anime.title} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                    </div>
                    <div>
                      <h3 className="text-xl font-black text-white">{anime.title}</h3>

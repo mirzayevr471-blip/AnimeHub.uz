@@ -75,13 +75,16 @@ const Header = () => {
         
         {/* Logo */}
         <div className="flex-shrink-0 flex items-center gap-8">
-          <Link to="/" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center gap-2.5 group">
             <img 
-              src="animehub_uz_logo_image_1.png" 
+              src="input_file_0.png" 
               alt="AnimeHub.uz" 
-              className="h-10 w-auto group-hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_12px_rgba(37,99,235,0.3)]"
+              className="w-10 h-10 rounded-xl object-cover shadow-lg shadow-blue-500/40 group-hover:scale-110 transition-transform duration-300 border border-blue-500/30"
               referrerPolicy="no-referrer"
             />
+            <span className="text-xl font-black italic tracking-tighter text-white">
+              Anime<span className="text-blue-500">Hub</span>.uz
+            </span>
           </Link>
           
           {/* Desktop Nav */}
@@ -211,7 +214,7 @@ const Header = () => {
                 <span className="text-[8px] font-bold text-gray-500 uppercase tracking-tighter">LVL {user.level || 1} • {user.points || 0} XP</span>
               </div>
               <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-blue-400 border border-white/20 flex-shrink-0 cursor-pointer group-hover:scale-105 transition-all shadow-xl shadow-blue-900/20 overflow-hidden ring-2 ring-transparent group-hover:ring-blue-500/50">
-                <img src={user.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&auto=format&fit=crop"} alt="Profile" className="w-full h-full object-cover" />
+                <img src={user.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&auto=format&fit=crop"} alt="Profile" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
               </div>
             </Link>
           ) : (

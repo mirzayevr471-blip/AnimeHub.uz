@@ -13,7 +13,13 @@ export default function AdminSettings() {
 
   // Local state for forms
   const [formData, setFormData] = useState(globalSettings);
-  const [tgConfig, setTgConfig] = useState({ botToken: '', channelId: '' });
+  const [tgConfig, setTgConfig] = useState({ 
+    botToken: '', 
+    channelId: '',
+    googleClientId: '',
+    googleClientSecret: '',
+    sessionSecret: ''
+  });
 
   useEffect(() => {
     setFormData(globalSettings);
@@ -21,14 +27,33 @@ export default function AdminSettings() {
 
   useEffect(() => {
     if (activeSection === 'api') {
-      fetch('/api/admin/telegram/config')
-        .then(res => res.json())
-        .then(data => {
-          if (!data.error) {
-            setTgConfig({ botToken: data.botToken, channelId: data.channelId });
+      fetch('/api/admin/env/config')
+        .then(async res => {
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+          const contentType = res.headers.get("content-type");
+          if (contentType && contentType.indexOf("application/json") !== -1) {
+            return res.json();
+          } else {
+            const text = await res.text();
+            console.error("Non-JSON response received:", text.substring(0, 100));
+            throw new Error("Server returned non-JSON response");
           }
         })
-        .catch(console.error);
+        .then(data => {
+          if (data && !data.error) {
+            setTgConfig({ 
+              botToken: data.botToken || '', 
+              channelId: data.channelId || '',
+              googleClientId: data.googleClientId || '',
+              googleClientSecret: data.googleClientSecret || '',
+              sessionSecret: data.sessionSecret || ''
+            });
+          }
+        })
+        .catch(err => {
+          console.error("Failed to load API config:", err);
+          // Don't crash the UI, just log the error
+        });
     }
   }, [activeSection]);
 
@@ -36,7 +61,7 @@ export default function AdminSettings() {
     setIsSaving(true);
     
     if (activeSection === 'api') {
-      await fetch('/api/admin/telegram/config', {
+      await fetch('/api/admin/env/config', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(tgConfig)
@@ -97,7 +122,7 @@ export default function AdminSettings() {
               ].map((social) => (
                 <div key={social.key} className="space-y-2">
                   <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                    <social.icon className="w-3.5 h-3.5 text-purple-400" />
+                    <social.icon className="w-3.5 h-3.5 text-blue-400" />
                     {social.label}
                   </label>
                   <div className="relative group">
@@ -109,7 +134,7 @@ export default function AdminSettings() {
                         ...formData,
                         socialLinks: { ...formData.socialLinks, [social.key]: e.target.value }
                       })}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-purple-500 outline-none text-white transition-all placeholder:text-gray-700"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-blue-500 outline-none text-white transition-all placeholder:text-gray-700"
                     />
                     {formData.socialLinks[social.key as keyof typeof formData.socialLinks] && (
                       <div className="absolute right-4 top-1/2 -translate-y-1/2">
@@ -121,7 +146,7 @@ export default function AdminSettings() {
               ))}
             </div>
 
-            <div className="p-6 bg-purple-500/5 border border-purple-500/10 rounded-[32px] mt-6">
+            <div className="p-6 bg-blue-500/5 border border-blue-500/10 rounded-[32px] mt-6">
               <p className="text-[10px] text-gray-500 font-medium leading-relaxed italic text-center">
                 Footer'dagi belgilar bu yerda kiritilgan havolalar asosida avtomatik ravishda ko'rinadi. 
                 Agar havolani bo'sh qoldirsangiz, belgi saytdan yashiriladi.
@@ -133,14 +158,74 @@ export default function AdminSettings() {
       case 'api': {
         return (
           <div className="space-y-6 animate-in fade-in duration-500">
-            <div className="text-xs font-black uppercase tracking-widest text-gray-500 mb-4 px-1">Tashqi Xizmatlar Kalitlari</div>
+            <div className="text-xs font-black uppercase tracking-widest text-gray-500 mb-4 px-1">Atrof-muhit O'zgaruvchilari (Env Variables)</div>
+            
+            {/* Google OAuth Section */}
             <div className="p-6 bg-[#0a0a0c] border border-white/5 rounded-[32px] space-y-6">
               <div>
                 <h3 className="text-lg font-bold flex items-center gap-2 mb-1">
-                  <Send className="w-5 h-5 text-purple-500" />
+                  <Globe className="w-5 h-5 text-blue-500" />
+                  Google OAuth Sozlamalari
+                </h3>
+                <p className="text-xs text-gray-500">Saytga Google orqali kirishni ta'minlash uchun kerak.</p>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Google Client ID</label>
+                  <input 
+                    type="text" 
+                    placeholder="GOOGLE_CLIENT_ID"
+                    value={tgConfig.googleClientId}
+                    onChange={(e) => setTgConfig({...tgConfig, googleClientId: e.target.value})}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-blue-500 transition-all text-white placeholder:text-gray-700 font-mono" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Google Client Secret</label>
+                  <input 
+                    type="password" 
+                    placeholder="GOOGLE_CLIENT_SECRET"
+                    value={tgConfig.googleClientSecret}
+                    onChange={(e) => setTgConfig({...tgConfig, googleClientSecret: e.target.value})}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-blue-500 transition-all text-white placeholder:text-gray-700 font-mono" 
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Session Section */}
+            <div className="p-6 bg-[#0a0a0c] border border-white/5 rounded-[32px] space-y-6">
+              <div>
+                <h3 className="text-lg font-bold flex items-center gap-2 mb-1">
+                  <Shield className="w-5 h-5 text-blue-500" />
+                  Tizim Xavfsizligi
+                </h3>
+                <p className="text-xs text-gray-500">Xavfsiz sessiyalar uchun maxfiy kalit.</p>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Session Secret</label>
+                  <input 
+                    type="password" 
+                    placeholder="SESSION_SECRET"
+                    value={tgConfig.sessionSecret}
+                    onChange={(e) => setTgConfig({...tgConfig, sessionSecret: e.target.value})}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-blue-500 transition-all text-white placeholder:text-gray-700 font-mono" 
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Telegram Section */}
+            <div className="p-6 bg-[#0a0a0c] border border-white/5 rounded-[32px] space-y-6">
+              <div>
+                <h3 className="text-lg font-bold flex items-center gap-2 mb-1">
+                  <Send className="w-5 h-5 text-blue-500" />
                   Telegram Bot Integratsiyasi
                 </h3>
-                <p className="text-xs text-gray-500">Kanalga xabarlar yuborish uchun bot tokeni va kanal ID/username kiritilishi kerak.</p>
+                <p className="text-xs text-gray-500">Kanalga xabarlar yuborish uchun bot tokeni va kanal ID.</p>
               </div>
               
               <div className="space-y-4">
@@ -148,28 +233,28 @@ export default function AdminSettings() {
                   <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Bot Tokeni</label>
                   <input 
                     type="password" 
-                    placeholder="Masalan: 123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+                    placeholder="TELEGRAM_BOT_TOKEN"
                     value={tgConfig.botToken}
                     onChange={(e) => setTgConfig({...tgConfig, botToken: e.target.value})}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-purple-500 transition-all text-white placeholder:text-gray-700 font-mono" 
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-blue-500 transition-all text-white placeholder:text-gray-700 font-mono" 
                   />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Kanal Username yoki ID</label>
                   <input 
                     type="text" 
-                    placeholder="Masalan: @anihub_uz yoki -10012345678"
+                    placeholder="TELEGRAM_CHANNEL_ID"
                     value={tgConfig.channelId}
                     onChange={(e) => setTgConfig({...tgConfig, channelId: e.target.value})}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-purple-500 transition-all text-white placeholder:text-gray-700 font-mono" 
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-blue-500 transition-all text-white placeholder:text-gray-700 font-mono" 
                   />
                 </div>
               </div>
             </div>
             
-            <div className="p-6 bg-purple-500/5 border border-purple-500/10 rounded-[32px]">
-              <p className="text-[10px] text-purple-400 font-medium leading-relaxed italic text-center">
-                Eslatma: Ushbu tokenlar yordamida "Yangi anime qo'shish" bo'limida belgilangan kanalga avtomatik ravishda xabar yuboriladi. Telegram botni o'z kanalingizga qo'shib unga yozish huquqini berishingiz zarur!
+            <div className="p-6 bg-blue-500/5 border border-blue-500/10 rounded-[32px]">
+              <p className="text-[10px] text-blue-400 font-medium leading-relaxed italic text-center">
+                Eslatma: Bu o'zgaruvchilar saytning asosiy funksiyalari uchun zarur. Ularni o'zgartirish tizim ishiga ta'sir qilishi mumkin.
               </p>
             </div>
           </div>
@@ -184,7 +269,7 @@ export default function AdminSettings() {
                 type="text" 
                 value={formData.siteName}
                 onChange={(e) => setFormData({...formData, siteName: e.target.value})}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-purple-500 transition-all text-white" 
+                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-blue-500 transition-all text-white" 
               />
             </div>
             <div className="space-y-2">
@@ -193,7 +278,7 @@ export default function AdminSettings() {
                 rows={3}
                 value={formData.siteDescription}
                 onChange={(e) => setFormData({...formData, siteDescription: e.target.value})}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-purple-500 transition-all text-white resize-none" 
+                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-blue-500 transition-all text-white resize-none" 
               />
             </div>
             <div className="space-y-2">
@@ -202,7 +287,7 @@ export default function AdminSettings() {
                 type="email" 
                 value={formData.contactEmail}
                 onChange={(e) => setFormData({...formData, contactEmail: e.target.value})}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-purple-500 transition-all text-white" 
+                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-blue-500 transition-all text-white" 
               />
             </div>
           </div>
@@ -248,12 +333,12 @@ export default function AdminSettings() {
                 <div 
                   key={s.id} 
                   onClick={() => setActiveSection(s.id)}
-                  className="bg-[#0a0a0c] p-6 rounded-[32px] border border-white/5 hover:border-purple-500/30 transition-all duration-500 cursor-pointer group active:scale-95"
+                  className="bg-[#0a0a0c] p-6 rounded-[32px] border border-white/5 hover:border-blue-500/30 transition-all duration-500 cursor-pointer group active:scale-95"
                 >
-                  <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-purple-600 group-hover:text-white transition-all duration-500 text-gray-500">
+                  <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 text-gray-500">
                     <s.icon className="w-6 h-6" />
                   </div>
-                  <h3 className="text-lg font-bold mb-2 group-hover:text-purple-400 transition-colors">{s.title}</h3>
+                  <h3 className="text-lg font-bold mb-2 group-hover:text-blue-400 transition-colors">{s.title}</h3>
                   <p className="text-xs text-gray-500 font-medium leading-relaxed">{s.desc}</p>
                 </div>
               ))}
@@ -265,8 +350,8 @@ export default function AdminSettings() {
                 <div className="flex items-center justify-between p-6 bg-white/5 rounded-[24px] border border-white/5 transition-all hover:bg-white/10">
                   <div className="flex items-center gap-4">
                     {isScanning ? (
-                      <div className="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center">
-                        <Loader2 className="w-5 h-5 text-purple-500 animate-spin" />
+                      <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center">
+                        <Loader2 className="w-5 h-5 text-blue-500 animate-spin" />
                       </div>
                     ) : (
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${scanResult === 'stable' ? 'bg-emerald-500/10' : 'bg-blue-500/10'}`}>
@@ -285,7 +370,7 @@ export default function AdminSettings() {
                   <button 
                     onClick={handleScan}
                     disabled={isScanning}
-                    className="text-[10px] font-black uppercase tracking-widest text-purple-400 hover:text-purple-300 disabled:opacity-50 flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/5 transition-all"
+                    className="text-[10px] font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 disabled:opacity-50 flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/5 transition-all"
                   >
                     {isScanning ? 'Kutib turing...' : 'Tekshirish'}
                   </button>
@@ -327,7 +412,7 @@ export default function AdminSettings() {
                 <button 
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-4 rounded-2xl font-bold text-sm shadow-xl shadow-purple-900/20 active:scale-95 transition-all flex items-center justify-center gap-2"
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl font-bold text-sm shadow-xl shadow-blue-900/20 active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
                   {isSaving ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
