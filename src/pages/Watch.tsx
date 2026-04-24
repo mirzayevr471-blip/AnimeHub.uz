@@ -330,6 +330,7 @@ export default function Watch() {
                     <iframe 
                       src={getVideoEmbedUrl(activeEpisode.videoUrl)}
                       className="w-full h-full border-none"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                       title={`${anime.title} - ${activeEpisode.number}-qism`}
                     />

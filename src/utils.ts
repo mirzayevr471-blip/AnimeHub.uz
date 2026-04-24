@@ -4,15 +4,22 @@
 export const extractIframeSrc = (input: string): string => {
   if (!input) return '';
   
+  let result = input.trim();
+  
   // If it's an iframe tag, extract src
   if (input.includes('<iframe')) {
     const srcMatch = input.match(/src=["']([^"']+)["']/i);
     if (srcMatch && srcMatch[1]) {
-      return srcMatch[1];
+      result = srcMatch[1];
     }
   }
   
-  return input.trim();
+  // Handle protocol-relative URLs
+  if (result.startsWith('//')) {
+    result = 'https:' + result;
+  }
+  
+  return result;
 };
 
 /**
@@ -70,5 +77,5 @@ export const getVideoEmbedUrl = (url: string): string => {
     console.warn("Invalid URL passed to getVideoEmbedUrl:", url);
   }
 
-  return url;
+  return cleanUrl;
 };

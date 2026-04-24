@@ -388,7 +388,8 @@ export default function AdminEpisodes() {
               
               <iframe 
                 src={getVideoEmbedUrl(playingEpisode.videoUrl)}
-                className="w-full h-full"
+                className="w-full h-full border-none"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
                 title={playingEpisode.title}
               />
