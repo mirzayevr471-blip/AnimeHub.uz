@@ -298,15 +298,15 @@ export default function AdminEpisodes() {
                   <div>
                     <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-2">
                        <Video className="w-3 h-3 text-blue-400" />
-                       Video Havolasi (URL)
+                       Video Embed Code (URL yoki Iframe)
                     </label>
-                    <input 
+                    <textarea 
                       required 
-                      type="url" 
+                      rows={1}
                       value={formData.videoUrl}
                       onChange={e => setFormData({...formData, videoUrl: e.target.value})}
-                      placeholder="https://myvideo.com/embed/..."
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-blue-500 focus:outline-none transition-all placeholder:text-gray-700" 
+                      placeholder="https://... yoki <iframe>...</iframe>"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-blue-500 focus:outline-none transition-all placeholder:text-gray-700 resize-none" 
                     />
                   </div>
                   <div>

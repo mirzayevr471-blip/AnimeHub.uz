@@ -1,15 +1,33 @@
 /**
+ * Extracts the 'src' value from an iframe string or returns the string if it's already a URL.
+ */
+export const extractIframeSrc = (input: string): string => {
+  if (!input) return '';
+  
+  // If it's an iframe tag, extract src
+  if (input.includes('<iframe')) {
+    const srcMatch = input.match(/src=["']([^"']+)["']/i);
+    if (srcMatch && srcMatch[1]) {
+      return srcMatch[1];
+    }
+  }
+  
+  return input.trim();
+};
+
+/**
  * Converts various video platform URLs to their embeddable counterparts.
  * Supports YouTube and Odysee.
  */
 export const getVideoEmbedUrl = (url: string): string => {
-  if (!url) return '';
+  const cleanUrl = extractIframeSrc(url);
+  if (!cleanUrl) return '';
   
   // Already an embed URL
-  if (url.includes('/embed/')) return url;
+  if (cleanUrl.includes('/embed/')) return cleanUrl;
 
   try {
-    const urlObj = new URL(url);
+    const urlObj = new URL(cleanUrl);
     const host = urlObj.hostname.toLowerCase();
 
     // YouTube
