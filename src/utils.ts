@@ -56,21 +56,26 @@ export const getVideoEmbedUrl = (url: string): string => {
 
     // Odysee
     if (host.includes('odysee.com')) {
-      // Pattern: https://odysee.com/@ChannelName:id/VideoName:vId
-      // Or: https://odysee.com/VideoName:vId
       const pathParts = urlObj.pathname.split('/').filter(p => p.length > 0);
-      
       if (pathParts.length > 0) {
-        // Get the last part which is usually VideoName:vId
         const lastPart = pathParts[pathParts.length - 1];
         if (lastPart.includes(':')) {
-           // Replace first colon with slash for embed format
            const embedPath = lastPart.replace(':', '/');
            return `https://odysee.com/$/embed/${embedPath}`;
         } else {
-           // Fallback for names without IDs
            return `https://odysee.com/$/embed/${lastPart}`;
         }
+      }
+    }
+
+    // Rumble
+    if (host.includes('rumble.com')) {
+      // If it's already an embed URL, it was caught by the /embed/ check above
+      // But if it's a share URL like https://rumble.com/v76qw8m-video-title.html
+      const path = urlObj.pathname;
+      const vMatch = path.match(/^\/v([a-z0-9]+)-/i);
+      if (vMatch && vMatch[1]) {
+        return `https://rumble.com/embed/v${vMatch[1]}/`;
       }
     }
   } catch (e) {
