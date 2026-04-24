@@ -40,12 +40,52 @@ export default function Watch() {
   const [userRating, setUserRating] = useState<number | null>(0); // Initial user rating set to 0
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' } | null>(null);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [commentText, setCommentText] = useState('');
+  const [comments, setComments] = useState([
+    { id: '1', userName: 'Azizbek', text: 'Juda ajoyib anime! Keyingi qismlarini kutib qolamiz.', time: '2 soat oldin', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aziz', likes: 12, isLiked: false },
+    { id: '2', userName: 'Malika', text: 'Grafikasi daxshat ekan, menga juda yoqdi.', time: '5 soat oldin', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Malika', likes: 8, isLiked: false },
+  ]);
 
   const anime = useMemo(() => animes.find(a => a.id === animeId), [animes, animeId]);
 
   const showToast = (message: string, type: 'success' | 'info' = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
+  };
+
+  const handleCommentLike = (id: string) => {
+    setComments(prev => prev.map(comment => {
+      if (comment.id === id) {
+        return {
+          ...comment,
+          likes: comment.isLiked ? comment.likes - 1 : comment.likes + 1,
+          isLiked: !comment.isLiked
+        };
+      }
+      return comment;
+    }));
+  };
+
+  const handleCommentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!commentText.trim()) {
+      showToast("Iltimos, fikringizni yozing", 'info');
+      return;
+    }
+
+    const newComment = {
+      id: Date.now().toString(),
+      userName: 'Siz', // In real app, get from AuthContext
+      text: commentText,
+      time: 'Hozirgina',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Siz',
+      likes: 0,
+      isLiked: false
+    };
+
+    setComments([newComment, ...comments]);
+    setCommentText('');
+    showToast("Fikringiz muvaffaqiyatli yuborildi!");
   };
 
   const handleLike = () => {
@@ -456,13 +496,13 @@ export default function Watch() {
                   </div>
                 </div>
 
-                {/* Comments Mockup */}
-                <div className="space-y-8 pt-8">
+                {/* Comments Section */}
+                <div className="space-y-8 pt-8" id="comments">
                   <div className="flex items-center justify-between">
                     <h3 className="text-xl font-black flex items-center gap-2">
                        <MessageSquare className="w-6 h-6 text-blue-500" />
                        Fikrlar 
-                       <span className="text-sm font-bold text-gray-500 ml-2">(42)</span>
+                       <span className="text-sm font-bold text-gray-500 ml-2">({comments.length})</span>
                     </h3>
                     <select className="bg-white/5 border border-white/5 text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-xl outline-none">
                       <option>Eng so'nggi</option>
@@ -470,21 +510,60 @@ export default function Watch() {
                     </select>
                   </div>
 
-                  <div className="flex gap-4">
-                    <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center font-black flex-shrink-0">
-                      MK
+                  <form onSubmit={handleCommentSubmit} className="flex gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-blue-400 rounded-2xl flex items-center justify-center font-black flex-shrink-0 shadow-lg shadow-blue-500/20">
+                      SZ
                     </div>
                     <div className="flex-1 space-y-3">
                       <textarea 
+                        value={commentText}
+                        onChange={(e) => setCommentText(e.target.value)}
                         className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm outline-none focus:border-blue-500 transition-all min-h-[100px] placeholder:text-gray-700" 
                         placeholder="Ushbu anime haqidagi fikringizni qoldiring..."
                       />
                       <div className="flex justify-end">
-                        <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-blue-900/20">
+                        <button 
+                          type="submit"
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-blue-900/20 active:scale-95"
+                        >
                           Yuborish
                         </button>
                       </div>
                     </div>
+                  </form>
+
+                  {/* Comment List */}
+                  <div className="space-y-6">
+                    {comments.map((comment) => (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        key={comment.id} 
+                        className="flex gap-4 group"
+                      >
+                        <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 border border-white/10">
+                          <img src={comment.avatar} alt={comment.userName} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="flex-1 bg-white/[0.02] border border-white/5 p-4 rounded-2xl hover:bg-white/5 transition-all">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-black text-white">{comment.userName}</span>
+                              <span className="text-[10px] text-gray-600 font-bold uppercase tracking-widest">{comment.time}</span>
+                            </div>
+                            <button 
+                              onClick={() => handleCommentLike(comment.id)}
+                              className={`flex items-center gap-1.5 transition-all duration-300 ${comment.isLiked ? 'text-blue-500' : 'text-gray-600 hover:text-blue-400'}`}
+                            >
+                              <ThumbsUp className={`w-3.5 h-3.5 ${comment.isLiked ? 'fill-blue-500' : ''}`} />
+                              {comment.likes > 0 && <span className="text-xs font-bold">{comment.likes}</span>}
+                            </button>
+                          </div>
+                          <p className="text-sm text-gray-400 leading-relaxed font-medium">
+                            {comment.text}
+                          </p>
+                        </div>
+                      </motion.div>
+                    ))}
                   </div>
                 </div>
               </div>

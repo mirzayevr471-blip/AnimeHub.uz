@@ -2,8 +2,8 @@ import { Anime } from '../types';
 
 export const heroAnime: Anime = {
   id: 'hero-1',
-  title: 'So\'lo Leveling',
-  image: 'https://images.unsplash.com/photo-1541562232579-512a21360020?q=80&w=2670&auto=format&fit=crop',
+  title: 'Solo Leveling',
+  image: 'https://images.unsplash.com/photo-1541562232579-512a21360020?q=80&w=2000&auto=format&fit=crop',
   rating: 9.8,
   year: 2024,
   type: 'TV Serial',
@@ -11,31 +11,29 @@ export const heroAnime: Anime = {
   genres: ['Sarguzasht', 'Jangari', 'Fantaziya'],
   description: 'Qudratli maxluqlar va sirli portal dunyosida omon qolish uchun kurash. Eng zaif hunterdan eng kuchliga aylanish yo\'lida misli ko\'rilmagan sarguzashtlarga guvoh bo\'ling.',
   episodesList: [
-    { id: 'ep-1', number: 1, title: 'I Am the Weakest', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', addedAt: new Date().toISOString(), duration: '23:45', thumbnail: 'https://picsum.photos/seed/solo1/320/180' },
-    { id: 'ep-2', number: 2, title: 'The Double Dungeon', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', addedAt: new Date().toISOString(), duration: '24:10', thumbnail: 'https://picsum.photos/seed/solo2/320/180' }
+    { id: 'ep-1', number: 1, title: 'I Am the Weakest', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', addedAt: new Date().toISOString(), duration: '23:45', thumbnail: 'https://images.unsplash.com/photo-1514068574489-503a8eb91592?q=80&w=600&auto=format&fit=crop' },
+    { id: 'ep-2', number: 2, title: 'The Double Dungeon', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', addedAt: new Date().toISOString(), duration: '24:10', thumbnail: 'https://images.unsplash.com/photo-1578632292335-df3f47ebb2cb?q=80&w=600&auto=format&fit=crop' }
   ]
 };
 
 export const recentlyAdded: Anime[] = [
   {
     id: 'req-1',
-    title: 'Qo\'shni farishta 2',
-    image: 'https://images.unsplash.com/photo-1580477651139-447b961f681a?q=80&w=1000&auto=format&fit=crop',
-    rating: 8.5,
+    title: 'Gojo Satoru: Cheksizlik',
+    image: 'https://images.unsplash.com/photo-1621478373722-155d946f3f23?q=80&w=1000&auto=format&fit=crop',
+    rating: 9.9,
     year: 2024,
     type: 'TV Serial',
     status: 'Davom etayotgan',
-    genres: ['Romantika', 'Maktab', 'Komediya'],
-    description: 'Amane Fujimiya va Mahiru Shiina o\'rtasidagi munosabatlar yangi bosqichga ko\'tariladi. Bu mavsumda ularning hayoti yanada qiziqarli voqealarga boy bo\'ladi.',
-    episodesList: [
-      { id: 'ep-1-1', number: 1, title: 'Yangi boshlanish', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', addedAt: new Date().toISOString(), duration: '22:30', thumbnail: 'https://picsum.photos/seed/angle1/320/180' }
-    ]
+    genres: ['Sarguzasht', 'Jangari', 'G\'ayritabiiy'],
+    description: 'Eng kuchli sehrgarning hayoti va uning misli ko\'rilmagan janglari haqida hikoya.',
+    episodesList: []
   },
   {
     id: 'req-2',
-    title: 'Vahshiylar malikasi',
-    image: 'https://images.unsplash.com/photo-1578632292335-df3f47ebb2cb?q=80&w=1000&auto=format&fit=crop',
-    rating: 9.1,
+    title: 'Demon Slayer: Hashira Training',
+    image: 'https://images.unsplash.com/photo-1571757767119-68b8dbed8c97?q=80&w=1000&auto=format&fit=crop',
+    rating: 9.6,
     year: 2023,
     type: 'TV Serial',
     status: 'Tugallangan',

@@ -9,16 +9,18 @@ const Footer = () => {
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="col-span-1 md:col-span-2">
-             <a href="/" className="flex items-center gap-2 group mb-4">
-               <img 
-                 src="input_file_0.png" 
-                 alt="AnimeHub.uz" 
-                 className="w-9 h-9 rounded-lg object-cover shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform duration-300 border border-blue-500/20"
-                 referrerPolicy="no-referrer"
-               />
-               <span className="text-lg font-black italic tracking-tighter text-white">
-                 Anime<span className="text-blue-500">Hub</span>.uz
-               </span>
+             <a href="/" className="flex items-center gap-3 group mb-6 outline-none">
+               <div className="relative w-10 h-10 bg-gradient-to-tr from-blue-700 to-blue-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-all duration-500">
+                  <span className="text-sm font-black text-white italic">A</span>
+               </div>
+               <div className="flex flex-col -space-y-1">
+                 <span className="text-xl font-black italic tracking-tighter text-white">
+                   <span className="text-blue-500">Anime</span>Hub
+                 </span>
+                 <span className="text-[8px] font-black uppercase tracking-[0.2em] text-gray-600 group-hover:text-blue-500 transition-colors">
+                   UZBEKISTAN .UZ
+                 </span>
+               </div>
              </a>
             <p className="text-gray-400 text-sm leading-relaxed max-w-sm mb-6">
               {settings.siteDescription}

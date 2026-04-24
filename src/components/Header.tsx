@@ -14,7 +14,7 @@ const Header = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
-  const { announcements } = useAnnouncements();
+  const { announcements, updateAnnouncement, deleteAnnouncement } = useAnnouncements();
 
   useEffect(() => {
     setSearchValue(searchParams.get('q') || '');
@@ -75,16 +75,33 @@ const Header = () => {
         
         {/* Logo */}
         <div className="flex-shrink-0 flex items-center gap-8">
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <img 
-              src="input_file_0.png" 
-              alt="AnimeHub.uz" 
-              className="w-10 h-10 rounded-xl object-cover shadow-lg shadow-blue-500/40 group-hover:scale-110 transition-transform duration-300 border border-blue-500/30"
-              referrerPolicy="no-referrer"
-            />
-            <span className="text-xl font-black italic tracking-tighter text-white">
-              Anime<span className="text-blue-500">Hub</span>.uz
-            </span>
+          <Link to="/" className="flex items-center gap-3 group outline-none">
+            <div className="relative flex items-center justify-center">
+              {/* Pulsing Background */}
+              <div className="absolute inset-0 bg-blue-600/20 blur-xl rounded-full group-hover:bg-blue-600/40 transition-all duration-500"></div>
+              
+              {/* Modern "A" Badge */}
+              <div className="relative w-12 h-12 bg-gradient-to-tr from-blue-700 to-blue-500 rounded-[18px] flex items-center justify-center shadow-[0_10px_25px_-5px_rgba(37,99,235,0.4)] group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 border border-white/20">
+                <span className="text-2xl font-black text-white italic tracking-tighter drop-shadow-md">A</span>
+                
+                {/* Gloss Effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-[18px]"></div>
+              </div>
+
+              {/* Decorative Dot */}
+              <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-[#070708] rounded-full flex items-center justify-center">
+                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
+              </div>
+            </div>
+
+            <div className="flex flex-col -space-y-1">
+              <span className="text-2xl font-black italic tracking-tighter text-white">
+                <span className="text-blue-500">Anime</span>Hub
+              </span>
+              <span className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-500 group-hover:text-blue-400 transition-colors">
+                UZBEKISTAN
+              </span>
+            </div>
           </Link>
           
           {/* Desktop Nav */}
@@ -134,11 +151,16 @@ const Header = () => {
             <div className="relative" ref={notifRef}>
               <button 
                 onClick={() => setShowNotifications(!showNotifications)}
-                className={`relative p-2 rounded-full transition-colors focus:outline-none flex items-center justify-center bg-[#111] sm:bg-transparent ${showNotifications ? 'bg-white/10' : 'hover:bg-white/10'}`}
+                className={`relative p-2.5 rounded-xl transition-all duration-300 focus:outline-none flex items-center justify-center bg-white/5 border border-white/10 group ${showNotifications ? 'bg-blue-600/20 border-blue-500/50 scale-95' : 'hover:bg-white/10 hover:border-white/20'}`}
               >
-                <Bell className="w-5 h-5 text-gray-400" />
+                <Bell className={`w-5 h-5 transition-all duration-300 ${hasUnread ? 'text-blue-400 animate-bounce' : 'text-gray-400 group-hover:text-white'}`} style={{ animationDuration: '3s' }} />
                 {hasUnread && (
-                  <div className="absolute top-1 right-1.5 w-2.5 h-2.5 bg-blue-500 rounded-full border-2 border-[#111] animate-pulse"></div>
+                  <>
+                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-600 rounded-full border-2 border-[#070708] flex items-center justify-center shadow-lg">
+                      <span className="text-[8px] font-black text-white">{activeNotifications.filter(n => n.isActive).length}</span>
+                    </div>
+                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full animate-ping opacity-75"></div>
+                  </>
                 )}
               </button>
 
@@ -154,37 +176,75 @@ const Header = () => {
                   >
                     <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between bg-black/40">
                       <h3 className="font-bold text-white tracking-tight">Bildirishnomalar</h3>
-                      <button 
-                        onClick={() => setShowNotifications(false)}
-                        className="text-gray-500 hover:text-white transition-colors p-1"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center gap-3">
+                        {activeNotifications.length > 0 && (
+                          <button 
+                            onClick={() => {
+                              // Mark all as read logic (simulated by deleting or marking inactive)
+                              activeNotifications.forEach(n => updateAnnouncement(n.id, { isActive: false }));
+                            }}
+                            className="text-[10px] font-black uppercase tracking-widest text-blue-500 hover:text-blue-400 transition-colors"
+                          >
+                            O'qilgan deb belgilash
+                          </button>
+                        )}
+                        <button 
+                          onClick={() => setShowNotifications(false)}
+                          className="text-gray-500 hover:text-white transition-colors p-1"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="max-h-[400px] overflow-y-auto">
+                    <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
                       {activeNotifications.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-                          <Bell className="w-10 h-10 text-gray-700 mb-3" />
-                          <p className="text-sm font-medium text-gray-500">Hozircha yangi xabarlar yo'q.</p>
+                          <div className="relative mb-4">
+                            <Bell className="w-12 h-12 text-gray-800" />
+                            <div className="absolute inset-0 bg-blue-500/10 blur-xl rounded-full"></div>
+                          </div>
+                          <p className="text-sm font-bold text-gray-400">Hozircha yangi xabarlar yo'q.</p>
+                          <p className="text-[10px] text-gray-600 uppercase tracking-widest mt-1">Yangi relizlarni kuting!</p>
                         </div>
                       ) : (
                         <div className="flex flex-col divide-y divide-white/5">
                           {activeNotifications.map((notif) => (
-                            <div key={notif.id} className="p-4 hover:bg-white/5 transition-colors cursor-default relative">
-                              {!notif.isActive && (
-                                <div className="absolute top-4 right-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest border border-gray-700 px-2 py-0.5 rounded">Eski</div>
-                              )}
+                            <div 
+                              key={notif.id} 
+                              className={`p-4 hover:bg-white/5 transition-all cursor-pointer relative group/notif ${notif.isActive ? 'bg-blue-600/5' : ''}`}
+                              onClick={() => updateAnnouncement(notif.id, { isActive: false })}
+                            >
                               <div className="flex gap-4">
-                                <div className={`mt-1 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${getTypeStyles(notif.type)}`}>
-                                  {getIcon(notif.type)}
+                                <div className={`mt-1 flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-transform group-hover/notif:scale-110 ${getTypeStyles(notif.type)}`}>
+                                  {getIcon(notif.type, "w-5 h-5")}
                                 </div>
                                 <div className="flex-1 space-y-1">
-                                  <h4 className="text-sm font-bold text-gray-200 line-clamp-1">{notif.title}</h4>
-                                  <p className="text-xs text-gray-400 font-medium line-clamp-2 leading-relaxed">{notif.message}</p>
-                                  <p className="text-[10px] text-gray-600 font-bold uppercase tracking-widest pt-1">
-                                    {new Date(notif.createdAt).toLocaleDateString()}
+                                  <div className="flex items-center justify-between">
+                                    <h4 className={`text-sm font-black tracking-tight line-clamp-1 ${notif.isActive ? 'text-white' : 'text-gray-400'}`}>
+                                      {notif.title}
+                                    </h4>
+                                    {notif.isActive && (
+                                      <div className="w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(37,99,235,0.6)]"></div>
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-gray-500 font-medium line-clamp-2 leading-relaxed group-hover/notif:text-gray-400 transition-colors">
+                                    {notif.message}
                                   </p>
+                                  <div className="flex items-center justify-between pt-2">
+                                    <p className="text-[9px] text-gray-600 font-black uppercase tracking-[0.2em]">
+                                      {new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • {new Date(notif.createdAt).toLocaleDateString()}
+                                    </p>
+                                    <button 
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        deleteAnnouncement(notif.id);
+                                      }}
+                                      className="opacity-0 group-hover/notif:opacity-100 text-gray-700 hover:text-rose-500 transition-all p-1"
+                                    >
+                                      <X className="w-3 h-3" />
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -192,6 +252,13 @@ const Header = () => {
                         </div>
                       )}
                     </div>
+                    {activeNotifications.length > 0 && (
+                      <div className="p-3 bg-black/40 border-t border-white/10 text-center">
+                         <button className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-500 hover:text-blue-500 transition-colors">
+                           Barcha bildirishnomalarni ko'rish
+                         </button>
+                      </div>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>

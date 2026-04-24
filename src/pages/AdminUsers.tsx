@@ -31,11 +31,58 @@ export default function AdminUsers() {
     setIsLoading(true);
     try {
       const data = localStorage.getItem(USERS_KEY);
-      const storedUsers = data ? JSON.parse(data) : [];
+      let storedUsers = data ? JSON.parse(data) : [];
+      
+      if (storedUsers.length === 0) {
+        // Initial mock data if empty
+        storedUsers = [
+          {
+            id: 'u-1',
+            name: 'Jasur Mirzaev',
+            email: 'mirzayevr471@gmail.com',
+            role: 'admin',
+            isSuperAdmin: true,
+            avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jasur'
+          },
+          {
+            id: 'u-2',
+            name: 'Bekzod Rahmonov',
+            email: 'bekzod@gmail.com',
+            role: 'admin',
+            isSuperAdmin: false,
+            avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Bekzod'
+          },
+          {
+            id: 'u-3',
+            name: 'Lola Karimboyeva',
+            email: 'lola@gmail.com',
+            role: 'user',
+            isSuperAdmin: false,
+            avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Lola'
+          },
+          {
+            id: 'u-4',
+            name: 'Sardor Olimov',
+            email: 'sardor@gmail.com',
+            role: 'user',
+            isSuperAdmin: false,
+            avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sardor'
+          },
+          {
+            id: 'u-5',
+            name: 'Aziz Toshpulatov',
+            email: 'aziz@gmail.com',
+            role: 'admin',
+            isSuperAdmin: false,
+            avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aziz'
+          }
+        ];
+        localStorage.setItem(USERS_KEY, JSON.stringify(storedUsers));
+      }
+      
       setUsers(storedUsers);
     } catch (err) {
       console.error('Failed to load users:', err);
-      // Fallback
       setUsers([]);
     } finally {
       setIsLoading(false);
@@ -104,18 +151,15 @@ export default function AdminUsers() {
     u.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const adminUsers = filteredUsers.filter(u => u.role === 'admin');
-  const regularUsers = filteredUsers.filter(u => u.role === 'user');
-
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header Area */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-[#0a0a0c] p-8 rounded-[40px] border border-white/5 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 blur-[100px] -mr-32 -mt-32"></div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 blur-[100px] -mr-32 -mt-32"></div>
         
         <div className="relative z-10">
           <h1 className="text-3xl font-black tracking-tight mb-2 flex items-center gap-3">
-            <ShieldCheck className="w-8 h-8 text-purple-500" />
+            <ShieldCheck className="w-8 h-8 text-blue-500" />
             Foydalanuvchilar Boshqaruvi
           </h1>
           <p className="text-gray-500 font-medium text-sm">Sayt adminlari va foydalanuvchilarini boshqarish</p>
@@ -123,7 +167,7 @@ export default function AdminUsers() {
 
         <button 
           onClick={() => setIsAddingAdmin(true)}
-          className="relative z-10 flex items-center justify-center gap-3 bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-purple-900/20 active:scale-95"
+          className="relative z-10 flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-blue-900/20 active:scale-95"
         >
           <UserPlus className="w-4 h-4" />
           Yangi Admin Qoshish
@@ -160,7 +204,7 @@ export default function AdminUsers() {
                   placeholder="Ism yoki email orqali qidirish..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-6 text-sm focus:outline-none focus:border-purple-500 transition-all font-medium text-white"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-6 text-sm focus:outline-none focus:border-blue-500 transition-all font-medium text-white"
                 />
               </div>
             </div>
@@ -185,7 +229,7 @@ export default function AdminUsers() {
                           <div className="flex items-center gap-2">
                             <span className="font-bold text-sm">{u.name}</span>
                             {u.role === 'admin' && (
-                              <span className={`text-[8px] font-black uppercase tracking-tight px-1.5 py-0.5 rounded border border-white/10 ${u.isSuperAdmin ? 'bg-purple-500 text-white' : 'bg-blue-500/20 text-blue-400'}`}>
+                              <span className={`text-[8px] font-black uppercase tracking-tight px-1.5 py-0.5 rounded border border-white/10 ${u.isSuperAdmin ? 'bg-blue-600 text-white' : 'bg-blue-500/20 text-blue-400'}`}>
                                 {u.isSuperAdmin ? 'Super' : 'Admin'}
                               </span>
                             )}
@@ -201,7 +245,7 @@ export default function AdminUsers() {
                               setNewAdminEmail(u.email);
                               setIsAddingAdmin(true);
                             }}
-                            className="bg-white/5 hover:bg-purple-600 p-2.5 rounded-xl border border-white/5 transition-all text-gray-400 hover:text-white"
+                            className="bg-white/5 hover:bg-blue-600 p-2.5 rounded-xl border border-white/5 transition-all text-gray-400 hover:text-white"
                             title="Admin qilish"
                           >
                             <ShieldCheck className="w-4 h-4" />
@@ -230,8 +274,8 @@ export default function AdminUsers() {
 
         {/* Sidebar Info */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="bg-gradient-to-tr from-purple-900/20 to-indigo-900/20 border border-purple-500/10 rounded-[40px] p-8 space-y-6 shadow-2xl">
-            <h3 className="text-sm font-black uppercase tracking-widest text-purple-400 flex items-center gap-3">
+          <div className="bg-gradient-to-tr from-blue-900/20 to-indigo-900/20 border border-blue-500/10 rounded-[40px] p-8 space-y-6 shadow-2xl">
+            <h3 className="text-sm font-black uppercase tracking-widest text-blue-400 flex items-center gap-3">
               <ShieldAlert className="w-5 h-5" /> Tizim Statistikasi
             </h3>
             
@@ -242,7 +286,7 @@ export default function AdminUsers() {
               </div>
               <div className="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5">
                 <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Adminlar Soni</span>
-                <span className="text-2xl font-black text-purple-400">{users.filter(u => u.role === 'admin').length}</span>
+                <span className="text-2xl font-black text-blue-400">{users.filter(u => u.role === 'admin').length}</span>
               </div>
             </div>
           </div>
@@ -250,7 +294,7 @@ export default function AdminUsers() {
           <div className="bg-[#0a0a0c] border border-white/5 rounded-[40px] p-8 space-y-4">
              <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] mb-4">ESLATMA</h4>
              <p className="text-xs text-gray-500 leading-relaxed font-medium">
-               Adminlarni tayinlashda ehtiyot bo'ling. Super Admin (eyfelchik@gmail.com) barcha huquqlarga ega va uni saytdan chetlatib bo'lmaydi.
+               Adminlarni tayinlashda ehtiyot bo'ling. Super Adminlar (mirzayevr471@gmail.com) barcha huquqlarga ega va ularni saytdan chetlatib bo'lmaydi.
              </p>
           </div>
         </div>
@@ -271,7 +315,7 @@ export default function AdminUsers() {
                initial={{ scale: 0.95, opacity: 0, y: 20 }}
                animate={{ scale: 1, opacity: 1, y: 0 }}
                exit={{ scale: 0.95, opacity: 0, y: 20 }}
-               className="relative bg-[#0a0a0c] border border-white/10 p-10 rounded-[40px] w-full max-w-lg shadow-[0_0_100px_rgba(168,85,247,0.1)]"
+               className="relative bg-[#0a0a0c] border border-white/10 p-10 rounded-[40px] w-full max-w-lg shadow-[0_0_100px_rgba(37,99,235,0.1)]"
              >
                <h2 className="text-2xl font-black tracking-tight mb-2">Admin Tayinlash</h2>
                <p className="text-gray-500 text-sm font-medium mb-8">Foydalanuvchini email orqali admin qiling</p>
@@ -280,13 +324,13 @@ export default function AdminUsers() {
                  <div className="space-y-2">
                     <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Foydalanuvchi Emaili</label>
                     <div className="relative group">
-                       <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-purple-500 transition-colors" />
+                       <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-blue-500 transition-colors" />
                        <input 
                          type="email"
                          value={newAdminEmail}
                          onChange={(e) => setNewAdminEmail(e.target.value)}
                          placeholder="email@example.com"
-                         className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 text-sm focus:outline-none focus:border-purple-500 transition-all text-white font-medium"
+                         className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 text-sm focus:outline-none focus:border-blue-500 transition-all text-white font-medium"
                        />
                     </div>
                  </div>
@@ -300,7 +344,7 @@ export default function AdminUsers() {
                     </button>
                     <button 
                       onClick={handleAddAdmin}
-                      className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-purple-900/20 active:scale-95"
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-blue-900/20 active:scale-95"
                     >
                       Tasdiqlash
                     </button>

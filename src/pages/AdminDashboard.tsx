@@ -40,13 +40,14 @@ export default function AdminDashboard() {
       trendUp: false
     },
     { 
-      title: "Ko'rishlar", 
-      value: "142.8k", 
+      title: "Foydalanuvchilar", 
+      value: (JSON.parse(localStorage.getItem('anihub_users_db') || '[]')).length.toString(), 
       icon: Users, 
       color: "text-emerald-500", 
       bg: "bg-emerald-500/10",
       trend: "+18%",
-      trendUp: true
+      trendUp: true,
+      onClick: () => navigate('/admin/users')
     },
   ];
 
@@ -111,7 +112,11 @@ export default function AdminDashboard() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, i) => (
-          <div key={i} className="bg-[#0a0a0c] p-6 rounded-2xl border border-white/5 relative overflow-hidden group hover:border-blue-500/30 transition-all duration-500">
+          <div 
+            key={i} 
+            onClick={stat.onClick}
+            className={`bg-[#0a0a0c] p-6 rounded-2xl border border-white/5 relative overflow-hidden group hover:border-blue-500/30 transition-all duration-500 ${stat.onClick ? 'cursor-pointer' : ''}`}
+          >
             <div className="flex justify-between items-start mb-4">
               <div className={`p-3 rounded-2xl ${stat.bg} group-hover:scale-110 transition-transform duration-500`}>
                 <stat.icon className={`w-6 h-6 ${stat.color}`} />

@@ -20,6 +20,35 @@ export const AnnouncementProvider: React.FC<{ children: React.ReactNode }> = ({ 
       const stored = localStorage.getItem(ANNOUNCEMENTS_KEY);
       if (stored) {
         setAnnouncements(JSON.parse(stored));
+      } else {
+        // Initial mock data if empty
+        const initialData: Announcement[] = [
+          {
+            id: '1',
+            title: 'Yangi Anime: Solo Leveling',
+            message: 'Solo Leveling ning 12-qismi hozirgina platformaga yuklandi. Tomosha qilishga shoshiling!',
+            type: 'info',
+            isActive: true,
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: '2',
+            title: 'Sifat Yangilanishi',
+            message: 'Barcha animelar endi 4K sifatda ham mavjud. Sozlamalardan sifatni o\'zgartirishingiz mumkin.',
+            type: 'success',
+            isActive: true,
+            createdAt: new Date(Date.now() - 3600000).toISOString()
+          },
+          {
+            id: '3',
+            title: 'Tez kunda: One Piece',
+            message: 'One Piece ning yangi sarguzashtlari 1 soatdan keyin bizning saytda premyera qilinadi.',
+            type: 'warning',
+            isActive: true,
+            createdAt: new Date(Date.now() - 7200000).toISOString()
+          }
+        ];
+        saveAnnouncements(initialData);
       }
     } catch (error) {
       console.error('Failed to load announcements:', error);

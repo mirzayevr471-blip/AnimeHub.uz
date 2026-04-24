@@ -50,12 +50,9 @@ export default function AdminLayout() {
           {/* Logo Area */}
           <div className="h-20 flex items-center px-6 border-b border-white/5 overflow-hidden">
             <Link to="/" className="flex items-center gap-3 group">
-              <img 
-                src="input_file_0.png" 
-                alt="AnimeHub.uz" 
-                className="w-10 h-10 rounded-xl object-cover shadow-lg shadow-blue-500/40 group-hover:rotate-6 transition-transform duration-500 border border-blue-500/30"
-                referrerPolicy="no-referrer"
-              />
+              <div className="w-10 h-10 bg-gradient-to-tr from-blue-700 to-blue-500 rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-6 transition-all duration-500 flex-shrink-0">
+                <span className="text-xl font-black text-white italic">A</span>
+              </div>
               <span className={`text-xl font-black tracking-tighter transition-all duration-500 ${isSidebarOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
                 ANIME<span className="text-blue-500">HUB</span>
                 <span className="text-[10px] ml-1 text-gray-500 font-bold border border-white/10 px-1 rounded uppercase">Pro</span>
