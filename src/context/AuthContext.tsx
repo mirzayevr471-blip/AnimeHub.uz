@@ -1,5 +1,16 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '../types';
+import { 
+  onAuthStateChanged, 
+  signInWithPopup, 
+  signOut, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword,
+  User as FirebaseUser 
+} from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { auth, db, googleProvider } from '../lib/firebase';
+import { handleFirestoreError } from '../lib/firestoreUtils';
 
 interface AuthContextType {
   user: User | null;
@@ -12,221 +23,91 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const USERS_KEY = 'anihub_users_db';
-const CURRENT_USER_KEY = 'anihub_current_user';
-
-const getStoredUsers = () => {
-  try {
-    const data = localStorage.getItem(USERS_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch (e) {
-    console.error("Corrupt USERS_KEY data in localStorage", e);
-    return [];
-  }
-};
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load user on mount
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch('/api/auth/me');
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  const syncUserProfile = async (firebaseUser: FirebaseUser) => {
+    try {
+      const userRef = doc(db, 'users', firebaseUser.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        setUser(userSnap.data() as User);
+      } else {
+        // Create new user profile in Firestore
+        const isSuperAdmin = firebaseUser.email === 'eyfelchik@gmail.com';
+        const isAdmin = isSuperAdmin || firebaseUser.email === 'mirzayevr471@gmail.com';
         
-        const contentType = response.headers.get("content-type");
-        if (!contentType || contentType.indexOf("application/json") === -1) {
-          const text = await response.text();
-          console.error("Non-JSON response from /api/auth/me:", text.substring(0, 100));
-          throw new Error("Server returned non-JSON response");
-        }
+        const newUser: User = {
+          id: firebaseUser.uid,
+          name: firebaseUser.displayName || 'Foydalanuvchi',
+          email: firebaseUser.email || '',
+          avatar: firebaseUser.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${firebaseUser.uid}`,
+          role: isAdmin ? 'admin' : 'user',
+          isSuperAdmin,
+          joinedAt: new Date().toISOString(),
+          level: 1,
+          points: 0,
+          favorites: [],
+          history: [],
+          achievements: []
+        };
 
-        const data = await response.json();
-        if (data.user) {
-          // Sync with USERS_KEY for admin panel visibility
-          const users = getStoredUsers();
-          const existingIdx = users.findIndex((u: any) => u.email === data.user.email);
-          
-          let finalUser = { ...data.user };
-          if (existingIdx >= 0) {
-            // Preserve role and local stats from storage
-            finalUser = { ...finalUser, ...users[existingIdx], role: users[existingIdx].role, isSuperAdmin: users[existingIdx].isSuperAdmin || data.user.isSuperAdmin };
-            users[existingIdx] = finalUser;
-          } else {
-            users.push(finalUser);
-          }
-          localStorage.setItem(USERS_KEY, JSON.stringify(users));
-          
-          setUser(finalUser);
-          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(finalUser));
-        } else {
-          // Fallback to local storage if server session is empty
-          const savedUser = localStorage.getItem(CURRENT_USER_KEY);
-          if (savedUser) setUser(JSON.parse(savedUser));
-        }
-      } catch (err) {
-        console.error('Failed to fetch session user:', err);
-        const savedUser = localStorage.getItem(CURRENT_USER_KEY);
-        try {
-          if (savedUser) setUser(JSON.parse(savedUser));
-        } catch (e) {
-          console.error("Corrupted CURRENT_USER_KEY");
-        }
-      } finally {
-        setIsLoading(false);
+        await setDoc(userRef, newUser);
+        setUser(newUser);
       }
-    };
+    } catch (error) {
+      handleFirestoreError(error, 'get', `users/${firebaseUser.uid}`);
+    }
+  };
 
-    fetchUser();
-  }, []);
-
-  // Sync session changes from other tabs/popups
   useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      const origin = event.origin;
-      if (!origin.endsWith('.run.app') && !origin.includes('localhost')) return;
-      
-      if (event.data?.type === 'OAUTH_AUTH_SUCCESS') {
-        // Refresh user data after successful Google Login
-        fetch('/api/auth/me')
-          .then(async res => {
-            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-            return res.json();
-          })
-          .then(data => {
-            if (data.user) {
-              const users = getStoredUsers();
-              const existingIdx = users.findIndex((u: any) => u.email === data.user.email);
-              
-              let finalUser = { ...data.user };
-              if (existingIdx >= 0) {
-                // Preserve role from storage
-                finalUser = { ...finalUser, ...users[existingIdx], role: users[existingIdx].role, isSuperAdmin: users[existingIdx].isSuperAdmin || data.user.isSuperAdmin };
-                users[existingIdx] = finalUser;
-              } else {
-                users.push(finalUser);
-              }
-              localStorage.setItem(USERS_KEY, JSON.stringify(users));
-              
-              setUser(finalUser);
-              localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(finalUser));
-            }
-          });
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        await syncUserProfile(firebaseUser);
+      } else {
+        setUser(null);
       }
-    };
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const loginWithGoogle = async () => {
     try {
-      const response = await fetch('/api/auth/google/url');
-      const contentType = response.headers.get("content-type");
-      
-      if (!response.ok || !contentType || contentType.indexOf("application/json") === -1) {
-        let errorMsg = 'Autentifikatsiya xatosi yuz berdi';
-        try {
-          const data = await response.json();
-          errorMsg = data.error || errorMsg;
-        } catch (e) {
-          // If not JSON, use default or status text
-          errorMsg = `Server error (${response.status})`;
-        }
-        throw new Error(errorMsg);
-      }
-
-      const data = await response.json();
-      const { url } = data;
-      
-      const width = 600;
-      const height = 700;
-      const left = window.screenX + (window.outerWidth - width) / 2;
-      const top = window.screenY + (window.outerHeight - height) / 2;
-      
-      const authWindow = window.open(
-        url,
-        'google_oauth',
-        `width=${width},height=${height},left=${left},top=${top}`
-      );
-
-      if (!authWindow) {
-        throw new Error('Iltimos, popup oynalarini ochishga ruxsat bering!');
-      }
+      await signInWithPopup(auth, googleProvider);
     } catch (err) {
-      console.error('Google Login Start Error:', err);
+      console.error('Google Login Error:', err);
       throw err;
     }
   };
 
   const login = async (email: string, password: string) => {
-    // Simulate API call
-    return new Promise<void>((resolve, reject) => {
-      setTimeout(() => {
-        const users = getStoredUsers();
-        const foundUser = users.find((u: any) => u.email === email && u.password === password);
-        
-        if (foundUser) {
-          const { password, ...userWithoutPassword } = foundUser;
-          setUser(userWithoutPassword);
-          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(userWithoutPassword));
-          resolve();
-        } else {
-          reject(new Error('Email yoki parol noto\'g\'ri'));
-        }
-      }, 1000);
-    });
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (err: any) {
+      throw new Error(err.message || 'Email yoki parol noto\'g\'ri');
+    }
   };
 
   const signup = async (userData: any) => {
-    return new Promise<void>((resolve, reject) => {
-      setTimeout(() => {
-        const users = getStoredUsers();
-        if (users.find((u: any) => u.email === userData.email)) {
-          reject(new Error("Ushbu email bilan allaqachon ro'yxatdan o'tilgan"));
-          return;
-        }
-
-        const isSuperAdmin = userData.email === 'eyfelchik@gmail.com';
-        const isAdmin = isSuperAdmin || userData.email === 'mirzayevr471@gmail.com';
-        const adminAvatar = "https://image.spreadshirtmedia.net/image-server/v1/compositions/T812A2PA3811PT17X46Y41D1037385934W21927H21927/views/1,width=550,height=550,appearanceId=2,backgroundColor=000000/cute-anime-boy-poster.jpg";
-        
-        const avatarUrl = isSuperAdmin 
-          ? adminAvatar 
-          : `https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.name}`;
-
-        const newUser = {
-          id: Date.now().toString(),
-          name: userData.name || 'Foydalanuvchi',
-          email: userData.email,
-          password: userData.password,
-          avatar: avatarUrl,
-          role: isAdmin ? 'admin' : 'user',
-          isSuperAdmin: isSuperAdmin,
-          joinedAt: new Date().toISOString().split('T')[0],
-          level: 1,
-          points: 0,
-          history: [],
-          favorites: [],
-          achievements: []
-        };
-
-        users.push(newUser);
-        localStorage.setItem(USERS_KEY, JSON.stringify(users));
-        
-        const { password, ...userWithoutPassword } = newUser;
-        setUser(userWithoutPassword);
-        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(userWithoutPassword));
-        resolve();
-      }, 1000);
-    });
+    try {
+      const { user: firebaseUser } = await createUserWithEmailAndPassword(auth, userData.email, userData.password);
+      
+      // The profile will be created in the onAuthStateChanged effect
+    } catch (err: any) {
+      throw new Error(err.message || "Ro'yxatdan o'tishda xatolik yuz berdi");
+    }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem(CURRENT_USER_KEY);
-    fetch('/api/auth/logout', { method: 'POST' }).catch(console.error);
+  const logout = async () => {
+    try {
+      await signOut(auth);
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
   };
 
   return (

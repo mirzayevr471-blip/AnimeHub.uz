@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useAnime } from '../context/AnimeContext';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -55,6 +55,11 @@ export default function Profile() {
   // Local form state for settings
   const [formName, setFormName] = useState(user.name);
   const [formEmail, setFormEmail] = useState(user.email);
+
+  useEffect(() => {
+    setFormName(user.name);
+    setFormEmail(user.email);
+  }, [user.name, user.email]);
 
   const stats: UserStats = useMemo(() => ({
     animeWatched: new Set(user.history.map(h => h.animeId)).size,

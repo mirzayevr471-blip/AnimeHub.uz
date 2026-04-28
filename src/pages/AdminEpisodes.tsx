@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAnime } from '../context/AnimeContext';
+import { useAnime, useEpisodes } from '../context/AnimeContext';
 import { ChevronLeft, Plus, Trash2, Video, List, Calendar, Hash, Type, Loader2, Check, Play, Image as ImageIcon, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Episode } from '../types';
@@ -10,6 +10,7 @@ export default function AdminEpisodes() {
   const { animeId } = useParams();
   const navigate = useNavigate();
   const { animes, addEpisode, deleteEpisode } = useAnime();
+  const { episodes, loading: epLoading } = useEpisodes(animeId);
   
   const anime = animes.find(a => a.id === animeId);
   const [isAdding, setIsAdding] = useState(false);
@@ -18,12 +19,19 @@ export default function AdminEpisodes() {
   const [playingEpisode, setPlayingEpisode] = useState<Episode | null>(null);
 
   const [formData, setFormData] = useState({
-    number: (anime?.episodesList?.length || 0) + 1,
+    number: (episodes?.length || 0) + 1,
     title: '',
     videoUrl: '',
     thumbnail: '',
     duration: '24:00'
   });
+
+  // Effect to update form number when episodes change
+  useEffect(() => {
+    if (episodes) {
+      setFormData(prev => ({ ...prev, number: episodes.length + 1 }));
+    }
+  }, [episodes]);
 
   if (!anime) {
     return (
@@ -38,12 +46,12 @@ export default function AdminEpisodes() {
     );
   }
 
-  const handleAdd = (e: React.FormEvent) => {
+  const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    setTimeout(() => {
-      addEpisode(anime.id, {
+    try {
+      await addEpisode(anime.id, {
         number: Number(formData.number),
         title: formData.title || `${formData.number}-qism`,
         videoUrl: formData.videoUrl,
@@ -51,19 +59,21 @@ export default function AdminEpisodes() {
         duration: formData.duration
       });
       
-      setIsLoading(false);
       setShowSuccess(true);
       setFormData({
-        number: (anime.episodesList?.length || 0) + 2,
+        number: (episodes?.length || 0) + 1,
         title: '',
         videoUrl: '',
         thumbnail: '',
         duration: '24:00'
       });
       setIsAdding(false);
-      
       setTimeout(() => setShowSuccess(false), 3000);
-    }, 800);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -117,7 +127,7 @@ export default function AdminEpisodes() {
                   <List className="w-4 h-4" />
                   <span className="text-xs font-bold uppercase tracking-tighter">Jami qismlar</span>
                 </div>
-                <span className="text-lg font-black text-white">{anime.episodesList?.length || 0}</span>
+                <span className="text-lg font-black text-white">{episodes?.length || 0}</span>
               </div>
               <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
                 <div className="flex items-center gap-3 text-gray-400">
@@ -136,12 +146,12 @@ export default function AdminEpisodes() {
             <div className="p-6 border-b border-white/5 bg-white/[0.02] flex items-center justify-between">
               <h3 className="text-lg font-black">Epizodlar Ro'yxati</h3>
               <div className="text-[10px] font-black bg-blue-600/10 text-blue-400 px-3 py-1 rounded-full border border-blue-500/10 uppercase tracking-widest">
-                {anime.episodesList?.length || 0} TA QISM
+                {episodes?.length || 0} TA QISM
               </div>
             </div>
             
             <div className="p-6">
-              {!anime.episodesList || anime.episodesList.length === 0 ? (
+              {!episodes || episodes.length === 0 ? (
                 <div className="py-20 text-center space-y-4">
                   <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto text-gray-600">
                     <Video className="w-8 h-8" />
@@ -153,7 +163,7 @@ export default function AdminEpisodes() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {anime.episodesList.map((ep, idx) => (
+                  {episodes.map((ep, idx) => (
                     <motion.div 
                       key={ep.id}
                       initial={{ opacity: 0, x: -20 }}

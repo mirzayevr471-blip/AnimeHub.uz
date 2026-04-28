@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PlayCircle, X, Calendar, ListVideo, Clapperboard } from 'lucide-react';
+import { PlayCircle, X, Calendar, ListVideo, Clapperboard, Eye } from 'lucide-react';
 import { Anime } from '../types';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
@@ -82,6 +82,10 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, rank }) => {
           <div className="flex items-center gap-2 mb-1 text-[10px]">
             <span className="text-yellow-400 font-bold">★ {anime.rating.toFixed(1)}</span>
             <span className="text-gray-400 font-medium">{anime.year}</span>
+            <span className="flex items-center gap-1 text-gray-500 font-bold ml-auto bg-black/40 px-1.5 py-0.5 rounded-md">
+              <Eye className="w-2.5 h-2.5" />
+              {anime.views?.toLocaleString() || 0}
+            </span>
           </div>
           <h3 className="text-white font-bold truncate transition-colors group-hover:text-blue-400">
             {anime.title}
@@ -120,6 +124,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, rank }) => {
                      <h3 className="text-xl font-black text-white">{anime.title}</h3>
                      <p className="text-[10px] text-blue-400 font-black uppercase tracking-widest mt-1 mb-2">{anime.type} • {anime.status}</p>
                      <div className="flex items-center gap-3 text-xs text-gray-400 font-medium">
+                       <span className="flex items-center gap-1.5"><Eye className="w-3.5 h-3.5 text-gray-500" /> {anime.views?.toLocaleString() || 0} ko'rilgan</span>
                        <span className="flex items-center gap-1.5"><ListVideo className="w-3.5 h-3.5 text-gray-500" /> {anime.episodesList?.length || 0} qism</span>
                        <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-gray-500" /> {anime.year}</span>
                      </div>

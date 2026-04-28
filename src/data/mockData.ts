@@ -10,6 +10,7 @@ export const heroAnime: Anime = {
   status: 'Davom etayotgan',
   genres: ['Sarguzasht', 'Jangari', 'Fantaziya'],
   description: 'Qudratli maxluqlar va sirli portal dunyosida omon qolish uchun kurash. Eng zaif hunterdan eng kuchliga aylanish yo\'lida misli ko\'rilmagan sarguzashtlarga guvoh bo\'ling.',
+  views: 125430,
   episodesList: [
     { id: 'ep-1', number: 1, title: 'I Am the Weakest', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', addedAt: new Date().toISOString(), duration: '23:45', thumbnail: 'https://images.unsplash.com/photo-1514068574489-503a8eb91592?q=80&w=600&auto=format&fit=crop' },
     { id: 'ep-2', number: 2, title: 'The Double Dungeon', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', addedAt: new Date().toISOString(), duration: '24:10', thumbnail: 'https://images.unsplash.com/photo-1578632292335-df3f47ebb2cb?q=80&w=600&auto=format&fit=crop' }
@@ -27,6 +28,7 @@ export const recentlyAdded: Anime[] = [
     status: 'Davom etayotgan',
     genres: ['Sarguzasht', 'Jangari', 'G\'ayritabiiy'],
     description: 'Eng kuchli sehrgarning hayoti va uning misli ko\'rilmagan janglari haqida hikoya.',
+    views: 85400,
     episodesList: []
   },
   {
@@ -39,6 +41,7 @@ export const recentlyAdded: Anime[] = [
     status: 'Tugallangan',
     genres: ['Jangari', 'Fantaziya'],
     description: 'Sirlar va kutilmagan voqealarga boy bo\'lgan dunyoda malikaning o\'z taxtini himoya qilish yo\'lidagi ayovsiz jangi.',
+    views: 42100,
     episodesList: []
   },
   {
@@ -51,6 +54,7 @@ export const recentlyAdded: Anime[] = [
     status: 'Davom etayotgan',
     genres: ['Sarguzasht', 'Komediya', 'Jangari'],
     description: 'Manki D. Luffi va uning jamoasi afsonaviy xazina "Van Pis" ni topish maqsadida Buyuk dengiz bo\'ylab sayohatga otlanadilar.',
+    views: 1250000,
     episodesList: [
       { id: 'ep-3-1', number: 1000, title: 'Overwhelming Strength', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', addedAt: new Date().toISOString(), duration: '23:50', thumbnail: 'https://picsum.photos/seed/onepiece1000/320/180' }
     ]
@@ -65,6 +69,7 @@ export const recentlyAdded: Anime[] = [
     status: 'Tugallangan',
     genres: ['Jangari', 'Drama', 'Fantaziya'],
     description: 'Insoniyat ulkan titanlar hujumidan himoyalanish uchun devorlar ortida yashaydi. Bu hikoya Eren Yegerning ozodlik uchun kurashini bayon etadi.',
+    views: 980500,
     episodesList: [
       { id: 'ep-7-1', number: 1, title: 'To You, 2000 Years From Now', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', addedAt: new Date().toISOString(), duration: '24:00', thumbnail: 'https://picsum.photos/seed/titan1/320/180' }
     ]

@@ -1,15 +1,67 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAnime } from '../context/AnimeContext';
-import { Film, PlayCircle, Star, Users, TrendingUp, Calendar, ArrowUpRight, ArrowDownRight, Video } from 'lucide-react';
+import { useAnnouncements } from '../context/AnnouncementContext';
+import { motion, AnimatePresence } from 'motion/react';
+import { 
+  Film, 
+  PlayCircle, 
+  Star, 
+  Users, 
+  TrendingUp, 
+  Calendar, 
+  ArrowUpRight, 
+  ArrowDownRight, 
+  Video, 
+  Trash2, 
+  AlertTriangle,
+  CheckCircle2,
+  XCircle
+} from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   AreaChart, Area, Cell, PieChart, Pie
 } from 'recharts';
 
 export default function AdminDashboard() {
-  const { animes } = useAnime();
+  const { animes, clearAllAnimes } = useAnime();
+  const { clearAllAnnouncements } = useAnnouncements();
   const navigate = useNavigate();
+
+  const [isClearModalOpen, setIsClearModalOpen] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const handleGlobalClear = async () => {
+    setIsClearing(true);
+    try {
+      // 1. Clear Animes
+      clearAllAnimes();
+      
+      // 2. Clear Announcements
+      clearAllAnnouncements();
+      
+      // 3. Clear Users (except super admins)
+      const USERS_KEY = 'anihub_users_db';
+      const storedUsers = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+      const preservedUsers = storedUsers.filter((u: any) => u.isSuperAdmin);
+      localStorage.setItem(USERS_KEY, JSON.stringify(preservedUsers));
+
+      // 4. Clear other potential DBs
+      localStorage.removeItem('anihub_support_tickets');
+      
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      setShowSuccess(true);
+      setTimeout(() => {
+        setShowSuccess(false);
+        setIsClearModalOpen(false);
+      }, 2000);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsClearing(false);
+    }
+  };
 
   const stats = [
     { 
@@ -133,7 +185,91 @@ export default function AdminDashboard() {
             <div className="absolute -bottom-10 -right-10 w-24 h-24 bg-blue-600/5 blur-3xl rounded-full group-hover:bg-blue-600/10 transition-colors"></div>
           </div>
         ))}
+
+        {/* Global Reset Card */}
+        <button 
+          onClick={() => setIsClearModalOpen(true)}
+          className="bg-rose-500/5 border border-rose-500/10 p-6 rounded-2xl flex flex-col justify-center items-center gap-4 group hover:bg-rose-500/10 hover:border-rose-500/30 transition-all cursor-pointer text-center relative overflow-hidden"
+        >
+          <div className="absolute top-0 right-0 p-2 opacity-10">
+            <Trash2 className="w-12 h-12" />
+          </div>
+          <div className="p-3 bg-rose-500/20 rounded-2xl text-rose-500 group-hover:scale-110 transition-all duration-500 shadow-lg shadow-rose-900/10">
+            <AlertTriangle className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-rose-500 font-black text-sm uppercase tracking-widest mb-1">Sistemani Tozalash</h3>
+            <p className="text-[10px] text-rose-500/60 font-bold uppercase tracking-tighter">Barcha ma'lumotlarni o'chirish</p>
+          </div>
+        </button>
       </div>
+
+      <AnimatePresence>
+        {isClearModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => !isClearing && setIsClearModalOpen(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-md"
+            />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative bg-[#070708] border border-rose-500/20 p-10 rounded-[40px] w-full max-w-lg shadow-[0_0_100px_rgba(244,63,94,0.1)] text-center"
+            >
+              <div className="w-20 h-20 bg-rose-500/10 text-rose-500 rounded-3xl flex items-center justify-center mx-auto mb-8 animate-pulse text-4xl">
+                <AlertTriangle />
+              </div>
+              
+              <h2 className="text-3xl font-black tracking-tight mb-4 text-white">Ishonchingiz komilmi?</h2>
+              <p className="text-gray-500 font-medium mb-10 leading-relaxed">
+                Bu amal tizimdagi barcha animelar, epizodlar, e'lonlar va foydalanuvchi ma'lumotlarini <span className="text-rose-500 font-black underline">butunlay o'chirib tashlaydi</span>. Bu ishni qaytarib bo'lmaydi!
+              </p>
+
+              {isClearing ? (
+                <div className="flex flex-col items-center gap-4">
+                  <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: "100%" }}
+                      transition={{ duration: 1.5 }}
+                      className="bg-rose-500 h-full"
+                    />
+                  </div>
+                  <span className="text-[10px] font-black uppercase text-rose-500 tracking-[0.3em] animate-pulse">Tozalanmoqda...</span>
+                </div>
+              ) : showSuccess ? (
+                <motion.div 
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="flex flex-col items-center gap-4 text-emerald-500"
+                >
+                  <CheckCircle2 className="w-16 h-16" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em]">Tizim muvaffaqiyatli tozalandi!</span>
+                </motion.div>
+              ) : (
+                <div className="flex gap-4">
+                  <button 
+                    onClick={() => setIsClearModalOpen(false)}
+                    className="flex-1 bg-white/5 hover:bg-white/10 text-gray-400 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all"
+                  >
+                    Bekor qilish
+                  </button>
+                  <button 
+                    onClick={handleGlobalClear}
+                    className="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-rose-900/20 active:scale-95"
+                  >
+                    Ha, Tozalash
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Chart */}

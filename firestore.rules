@@ -1,0 +1,113 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      // Role checking via users collection lookup
+      // In a real app, you might use a dedicated admins collection for better security
+      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // --- Validation Blueprints ---
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['name', 'email', 'role', 'joinedAt']) 
+        && data.name is string && data.name.size() <= 100
+        && data.email is string && data.email.size() <= 100
+        && data.role in ['admin', 'user']
+        && (data.get('isSuperAdmin', false) is bool)
+        && (data.get('level', 0) is int)
+        && (data.get('points', 0) is int);
+    }
+
+    function isValidAnime(data) {
+      return data.keys().hasAll(['title', 'image', 'rating', 'year', 'type', 'status', 'genres'])
+        && data.title is string && data.title.size() <= 200
+        && data.image is string && data.image.size() <= 1000
+        && data.rating is number
+        && data.year is int
+        && data.type is string
+        && data.status is string
+        && data.genres is list;
+    }
+
+    function isValidEpisode(data) {
+      return data.keys().hasAll(['number', 'title', 'videoUrl', 'addedAt'])
+        && data.number is int
+        && data.title is string && data.title.size() <= 200
+        && data.videoUrl is string && data.videoUrl.size() <= 1000;
+    }
+
+    function isValidComment(data) {
+      return data.keys().hasAll(['userId', 'userName', 'text', 'createdAt'])
+        && data.userId == request.auth.uid
+        && data.text is string && data.text.size() <= 1000
+        && data.likes is int;
+    }
+
+    function isValidAnnouncement(data) {
+      return data.keys().hasAll(['title', 'message', 'type', 'isActive', 'createdAt'])
+        && data.title is string && data.title.size() <= 200
+        && data.message is string && data.message.size() <= 2000
+        && data.type in ['info', 'warning', 'success', 'danger']
+        && data.isActive is bool;
+    }
+
+    // --- Collection Rules ---
+
+    match /users/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) && isValidUser(request.resource.data)
+        && (
+          // Allow self-update of certain fields
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'avatar', 'favorites', 'history', 'achievements', 'level', 'points'])
+          || isAdmin()
+        );
+      allow delete: if isAdmin();
+    }
+
+    match /animes/{animeId} {
+      allow read: if true;
+      allow create, delete: if isAdmin() && isValidAnime(request.resource.data);
+      allow update: if (isAdmin() && isValidAnime(request.resource.data))
+        || (isSignedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views', 'likes']));
+
+      match /episodes/{episodeId} {
+        allow read: if true;
+        allow create, update, delete: if isAdmin() && isValidEpisode(request.resource.data);
+      }
+
+      match /comments/{commentId} {
+        allow read: if true;
+        allow create: if isSignedIn() && isValidComment(request.resource.data);
+        allow update: if (isOwner(resource.data.userId) && isValidComment(request.resource.data))
+          || (isSignedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes']));
+        allow delete: if isOwner(resource.data.userId) || isAdmin();
+      }
+    }
+
+    match /announcements/{announcementId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin() && isValidAnnouncement(request.resource.data);
+    }
+  }
+}

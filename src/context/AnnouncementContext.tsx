@@ -6,6 +6,7 @@ interface AnnouncementContextType {
   addAnnouncement: (announcement: Omit<Announcement, 'id' | 'createdAt'>) => void;
   updateAnnouncement: (id: string, updates: Partial<Announcement>) => void;
   deleteAnnouncement: (id: string) => void;
+  clearAllAnnouncements: () => void;
 }
 
 const AnnouncementContext = createContext<AnnouncementContextType | undefined>(undefined);
@@ -79,8 +80,12 @@ export const AnnouncementProvider: React.FC<{ children: React.ReactNode }> = ({ 
     saveAnnouncements(announcements.filter(a => a.id !== id));
   };
 
+  const clearAllAnnouncements = () => {
+    saveAnnouncements([]);
+  };
+
   return (
-    <AnnouncementContext.Provider value={{ announcements, addAnnouncement, updateAnnouncement, deleteAnnouncement }}>
+    <AnnouncementContext.Provider value={{ announcements, addAnnouncement, updateAnnouncement, deleteAnnouncement, clearAllAnnouncements }}>
       {children}
     </AnnouncementContext.Provider>
   );

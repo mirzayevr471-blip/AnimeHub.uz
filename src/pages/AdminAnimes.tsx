@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAnime } from '../context/AnimeContext';
-import { Edit, Trash2, Plus, X, Search, Filter, ChevronRight, MoreHorizontal, Download, LayoutGrid, List, Star, Video, Image as ImageIcon } from 'lucide-react';
+import { Edit, Trash2, Plus, X, Search, Filter, ChevronRight, MoreHorizontal, Download, LayoutGrid, List, Star, Video, Image as ImageIcon, Eye } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Anime } from '../types';
+import { COMMON_GENRES } from '../constants';
 
 export default function AdminAnimes() {
   const { animes, deleteAnime, addAnime, updateAnime } = useAnime();
@@ -15,8 +17,23 @@ export default function AdminAnimes() {
   
   // anime form state
   const [formData, setFormData] = useState({
-    title: '', image: '', rating: 0, year: new Date().getFullYear(), type: 'TV Serial', status: 'Davom etayotgan', genres: 'Sarguzasht'
+    title: '', image: '', rating: 0, year: new Date().getFullYear(), type: 'TV Serial', status: 'Davom etayotgan', genres: [] as string[], views: 0
   });
+  const [genreInput, setGenreInput] = useState('');
+
+  const handleAddGenre = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && genreInput.trim()) {
+      e.preventDefault();
+      if (!formData.genres.includes(genreInput.trim())) {
+        setFormData({ ...formData, genres: [...formData.genres, genreInput.trim()] });
+      }
+      setGenreInput('');
+    }
+  };
+
+  const removeGenre = (genre: string) => {
+    setFormData({ ...formData, genres: formData.genres.filter(g => g !== genre) });
+  };
 
   const filteredAnimes = animes.filter(anime => {
     const matchesSearch = anime.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -33,7 +50,8 @@ export default function AdminAnimes() {
       year: anime.year,
       type: anime.type,
       status: anime.status,
-      genres: anime.genres.join(', ')
+      genres: anime.genres,
+      views: anime.views || 0
     });
     setIsModalOpen(true);
   };
@@ -42,7 +60,7 @@ export default function AdminAnimes() {
     navigate('/admin/animes/add');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const animeData = {
       title: formData.title,
@@ -51,13 +69,14 @@ export default function AdminAnimes() {
       year: Number(formData.year),
       type: formData.type as any,
       status: formData.status as any,
-      genres: formData.genres.split(',').map(s => s.trim())
+      genres: formData.genres,
+      views: Number(formData.views)
     };
 
     if (editingId) {
-      updateAnime(editingId, animeData);
+      await updateAnime(editingId, animeData);
     } else {
-      addAnime(animeData);
+      await addAnime(animeData);
     }
     setIsModalOpen(false);
   };
@@ -67,6 +86,7 @@ export default function AdminAnimes() {
       title: a.title,
       year: a.year,
       rating: a.rating,
+      views: a.views || 0,
       type: a.type,
       status: a.status,
       genres: a.genres.join(', ')
@@ -163,6 +183,7 @@ export default function AdminAnimes() {
                 <tr>
                   <th className="px-8 py-5 font-black">Anime</th>
                   <th className="px-8 py-5 font-black">Rating & Janr</th>
+                  <th className="px-8 py-5 font-black">Ko'rishlar</th>
                   <th className="px-8 py-5 font-black">Holat</th>
                   <th className="px-8 py-5 font-black">Progress</th>
                   <th className="px-8 py-5 font-black text-right">Amallar</th>
@@ -202,6 +223,12 @@ export default function AdminAnimes() {
                             </span>
                           ))}
                         </div>
+                      </div>
+                    </td>
+                    <td className="px-8 py-4">
+                      <div className="flex items-center gap-2 text-gray-400 font-bold">
+                        <Eye className="w-4 h-4 text-blue-500" />
+                        {anime.views?.toLocaleString() || 0}
                       </div>
                     </td>
                     <td className="px-8 py-4">
@@ -281,8 +308,14 @@ export default function AdminAnimes() {
               
               <div className="flex-1 min-w-0">
                 <h3 className="font-black text-base text-white truncate mb-1 group-hover:text-blue-400 transition-colors uppercase tracking-tight">{anime.title}</h3>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-1">
                   <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">{anime.year} • {anime.type}</span>
+                  <div className="flex items-center gap-1 text-[10px] text-blue-400 font-black">
+                    <Eye className="w-3 h-3" />
+                    {anime.views?.toLocaleString() || 0}
+                  </div>
+                </div>
+                <div className="flex justify-end">
                   <button 
                     onClick={() => deleteAnime(anime.id)}
                     className="text-gray-600 hover:text-rose-500 p-1 transition-colors"
@@ -359,6 +392,13 @@ export default function AdminAnimes() {
                       <input required type="number" value={formData.year} onChange={e=>setFormData({...formData, year: Number(e.target.value)})} className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-blue-500 focus:outline-none transition-all font-bold" />
                     </div>
                   </div>
+                  <div>
+                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Ko'rishlar Soni</label>
+                    <div className="relative">
+                      <Eye className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+                      <input required type="number" value={formData.views} onChange={e=>setFormData({...formData, views: Number(e.target.value)})} className="w-full bg-white/5 border border-white/10 rounded-2xl pl-14 pr-6 py-4 text-sm focus:border-blue-500 focus:outline-none transition-all font-bold" />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-6">
@@ -379,17 +419,87 @@ export default function AdminAnimes() {
                       </select>
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Janrlar</label>
-                    <textarea 
-                      required 
-                      rows={3}
-                      value={formData.genres} 
-                      onChange={e=>setFormData({...formData, genres: e.target.value})} 
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-blue-500 focus:outline-none transition-all placeholder:text-gray-700 resize-none" 
-                      placeholder="Masalan: Sarguzasht, Jangari..." 
-                    />
-                    <p className="text-[9px] text-gray-600 mt-2 italic font-medium px-1">* Janrlarni vergul bilan ajratib yozing.</p>
+                  <div className="md:col-span-2">
+                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3">Janrlar</label>
+                    <div className="space-y-4">
+                      <div className="relative group">
+                        <input 
+                          type="text" 
+                          value={genreInput}
+                          onChange={(e) => setGenreInput(e.target.value)}
+                          onKeyDown={handleAddGenre}
+                          placeholder="Janr qo'shing va Enter tugmasini bosing..." 
+                          className="w-full bg-[#0d0d0f] border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all placeholder:text-gray-700 font-bold text-white shadow-inner" 
+                        />
+                        <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                          <span className="text-[9px] text-gray-600 font-black uppercase tracking-widest bg-white/5 px-1.5 py-0.5 rounded italic hidden sm:block">Enter</span>
+                          <button 
+                            type="button"
+                            onClick={() => {
+                              if (genreInput.trim() && !formData.genres.includes(genreInput.trim())) {
+                                setFormData({ ...formData, genres: [...formData.genres, genreInput.trim()] });
+                                setGenreInput('');
+                              }
+                            }}
+                            className="p-1 hover:bg-white/5 rounded-lg transition-colors cursor-pointer group/plus"
+                          >
+                            <Plus className="w-4 h-4 text-gray-600 group-focus-within:text-blue-500 group-hover/plus:text-blue-400 transition-colors" />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-2 min-h-[80px] p-4 bg-white/[0.02] border border-white/5 rounded-2xl">
+                        <AnimatePresence>
+                          {formData.genres.map((genre) => (
+                            <motion.span 
+                              key={genre}
+                              initial={{ opacity: 0, scale: 0.8, y: 5 }}
+                              animate={{ opacity: 1, scale: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.8, y: 5 }}
+                              className="bg-blue-600/10 text-blue-400 border border-blue-500/20 px-3 py-1.5 rounded-xl text-[10px] font-black flex items-center gap-2 hover:bg-blue-600/20 hover:border-blue-500/40 transition-all cursor-default"
+                            >
+                              {genre}
+                              <button type="button" onClick={() => removeGenre(genre)} className="text-blue-400/50 hover:text-rose-500 transition-colors">
+                                <X className="w-3 h-3" />
+                              </button>
+                            </motion.span>
+                          ))}
+                        </AnimatePresence>
+                        {formData.genres.length === 0 && (
+                          <div className="w-full flex items-center justify-center py-4 opacity-20 select-none">
+                            <span className="text-[10px] text-gray-500 font-black uppercase tracking-[0.3em]">Hali janr yo'q</span>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Genre Suggestions */}
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-[9px] font-black text-gray-600 uppercase tracking-widest px-1">
+                          Mashhur Janrlar
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 p-1 max-h-[120px] overflow-y-auto custom-scrollbar">
+                          {COMMON_GENRES.map((genre) => {
+                            const isSelected = formData.genres.includes(genre);
+                            return (
+                              <button
+                                key={genre}
+                                type="button"
+                                disabled={isSelected}
+                                onClick={() => {
+                                  setFormData({ ...formData, genres: [...formData.genres, genre] });
+                                }}
+                                className={`px-2.5 py-1 rounded-lg text-[9px] font-bold transition-all ${
+                                  isSelected 
+                                    ? 'bg-white/5 text-gray-600 cursor-not-allowed border border-transparent'
+                                    : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/5'
+                                }`}
+                              >
+                                {genre}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAnime } from '../context/AnimeContext';
-import { ChevronLeft, Plus, X, Upload, Check, Info } from 'lucide-react';
+import { ChevronLeft, Plus, X, Upload, Check, Info, Search, Eye } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { COMMON_GENRES } from '../constants';
 
 export default function AdminAddAnime() {
   const navigate = useNavigate();
@@ -18,7 +19,8 @@ export default function AdminAddAnime() {
     year: new Date().getFullYear().toString(),
     type: 'TV Serial',
     status: 'Davom etayotgan',
-    genres: [] as string[]
+    genres: [] as string[],
+    views: '0'
   });
 
   const [genreInput, setGenreInput] = useState('');
@@ -48,11 +50,12 @@ export default function AdminAddAnime() {
     setLoading(true);
 
     try {
-      const newId = addAnime({
+      const newId = await addAnime({
         title: formData.title,
         image: formData.image,
         rating: parseFloat(formData.rating),
         year: parseInt(formData.year),
+        views: parseInt(formData.views),
         type: formData.type,
         status: formData.status,
         genres: formData.genres
@@ -195,6 +198,21 @@ export default function AdminAddAnime() {
                 />
               </div>
 
+              {/* Views */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Boshlang'ich Ko'rishlar</label>
+                <div className="relative">
+                  <Eye className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                  <input 
+                    required
+                    type="number" 
+                    value={formData.views}
+                    onChange={(e) => setFormData({ ...formData, views: e.target.value })}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl pl-14 pr-6 py-4 text-sm focus:outline-none focus:border-purple-500 transition-all font-medium text-white"
+                  />
+                </div>
+              </div>
+
               {/* Type */}
               <div className="space-y-2">
                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Turi</label>
@@ -222,43 +240,89 @@ export default function AdminAddAnime() {
               {/* Genres Tag Input */}
               <div className="md:col-span-2 space-y-4">
                 <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Janrlar</label>
-                <div className="space-y-3">
-                  <div className="relative">
+                <div className="space-y-4">
+                  <div className="relative group">
                     <input 
                       type="text" 
                       value={genreInput}
                       onChange={(e) => setGenreInput(e.target.value)}
                       onKeyDown={handleAddGenre}
                       placeholder="Janr qo'shing va Enter tugmasini bosing..." 
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-purple-500 transition-all font-medium text-white placeholder:text-gray-600"
+                      className="w-full bg-[#0d0d0f] border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-white placeholder:text-gray-600"
                     />
-                    <Plus className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                    <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                       <span className="text-[10px] text-gray-600 font-black uppercase tracking-widest bg-white/5 px-2 py-1 rounded-md hidden sm:block">Enter</span>
+                       <button 
+                        type="button"
+                        onClick={() => {
+                          if (genreInput.trim() && !formData.genres.includes(genreInput.trim())) {
+                            setFormData({ ...formData, genres: [...formData.genres, genreInput.trim()] });
+                            setGenreInput('');
+                          }
+                        }}
+                        className="p-1 hover:bg-white/5 rounded-lg transition-colors cursor-pointer group/plus"
+                       >
+                         <Plus className="w-4 h-4 text-gray-500 group-focus-within:text-blue-500 group-hover/plus:text-blue-400 transition-colors" />
+                       </button>
+                    </div>
                   </div>
                   
-                  <div className="flex flex-wrap gap-2 min-h-12 p-1">
+                  <div className="flex flex-wrap gap-2.5 min-h-[60px] p-4 bg-white/[0.02] border border-white/5 rounded-2xl">
                     <AnimatePresence>
                       {formData.genres.map((genre) => (
                         <motion.span 
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.8 }}
+                          initial={{ opacity: 0, scale: 0.8, y: 5 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.8, y: 5 }}
                           key={genre}
-                          className="bg-blue-600/20 text-blue-400 border border-blue-500/30 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 group"
+                          className="bg-blue-600/10 text-blue-400 border border-blue-500/20 px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-blue-600/20 hover:border-blue-500/40 transition-all cursor-default group/tag"
                         >
                           {genre}
                           <button 
                             type="button"
                             onClick={() => removeGenre(genre)}
-                            className="hover:text-rose-500 transition-colors"
+                            className="text-blue-400/50 hover:text-rose-500 transition-colors"
                           >
-                            <X className="w-3 h-3" />
+                            <X className="w-3.5 h-3.5" />
                           </button>
                         </motion.span>
                       ))}
                     </AnimatePresence>
                     {formData.genres.length === 0 && (
-                      <span className="text-[10px] text-gray-600 font-bold uppercase tracking-widest mt-3 ml-2">Hali hech qanday janr qo'shilmagan</span>
+                      <div className="w-full flex items-center justify-center py-2 opacity-30 select-none">
+                        <span className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">Hali janrlar yo'q</span>
+                      </div>
                     )}
+                  </div>
+
+                  {/* Genre Suggestions */}
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-[10px] font-black text-gray-600 uppercase tracking-widest ml-1">
+                      <Search className="w-3 h-3" />
+                      Mashhur Janrlar
+                    </div>
+                    <div className="flex flex-wrap gap-1.5 p-1">
+                      {COMMON_GENRES.map((genre) => {
+                        const isSelected = formData.genres.includes(genre);
+                        return (
+                          <button
+                            key={genre}
+                            type="button"
+                            disabled={isSelected}
+                            onClick={() => {
+                              setFormData({ ...formData, genres: [...formData.genres, genre] });
+                            }}
+                            className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${
+                              isSelected 
+                                ? 'bg-white/5 text-gray-600 cursor-not-allowed border border-transparent'
+                                : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/5'
+                            }`}
+                          >
+                            {genre}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>

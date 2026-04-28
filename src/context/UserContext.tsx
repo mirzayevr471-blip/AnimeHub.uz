@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { User, Achievement } from '../types';
 import { useAuth } from './AuthContext';
+import { doc, updateDoc, onSnapshot } from 'firebase/firestore';
+import { db } from '../lib/firebase';
+import { handleFirestoreError } from '../lib/firestoreUtils';
 
 interface UserContextType {
   user: User;
@@ -31,89 +34,85 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User>(authUser || GUEST_USER);
   const isInitialMount = useRef(true);
 
-  // Sync with AuthContext user
+  // Listen for real-time user updates from Firestore if authenticated
   useEffect(() => {
-    if (authUser) {
-      setUser(authUser);
+    if (authUser && authUser.id !== 'guest') {
+      const userRef = doc(db, 'users', authUser.id);
+      const unsubscribe = onSnapshot(userRef, (docSnap) => {
+        if (docSnap.exists()) {
+          setUser(docSnap.data() as User);
+        }
+      }, (error) => {
+        handleFirestoreError(error, 'list', `users/${authUser.id}`);
+      });
+      return () => unsubscribe();
     } else {
-      setUser(GUEST_USER);
+      setUser(authUser || GUEST_USER);
     }
   }, [authUser]);
 
-  // Persistent save to the "Users DB" if authenticated
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
-    }
-
-    if (authUser) {
-      const USERS_KEY = 'anihub_users_db';
-      const CURRENT_USER_KEY = 'anihub_current_user';
-      try {
-        const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
-        const userIndex = users.findIndex((u: any) => u.id === authUser.id);
-        
-        if (userIndex !== -1) {
-          // Keep password if it exists in the storage item
-          const diskUser = users[userIndex];
-          users[userIndex] = { ...diskUser, ...user };
-          localStorage.setItem(USERS_KEY, JSON.stringify(users));
-          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-        }
-      } catch (e) {
-        console.error('Error saving user data:', e);
-      }
-    }
-  }, [user]);
-
   // Recalculate level and points whenever history changes
-  useEffect(() => {
-    const totalEpisodes = user.history.length;
-    const rawScore = totalEpisodes * 0.1;
+  // This logic should probably be moved to the update methods if we want to save it to Firestore
+  const calculateProgress = (historyLength: number) => {
+    const rawScore = historyLength * 0.1;
     const level = Math.min(100, Math.floor(rawScore));
     const points = Math.round((rawScore - level) * 1000);
+    return { level, points };
+  };
 
-    if (user.level !== level || user.points !== points) {
-      setUser(prev => ({ ...prev, level, points }));
+  const syncToFirestore = async (updates: Partial<User>) => {
+    if (authUser && authUser.id !== 'guest') {
+      try {
+        const userRef = doc(db, 'users', authUser.id);
+        await updateDoc(userRef, updates);
+      } catch (error) {
+        handleFirestoreError(error, 'update', `users/${authUser.id}`);
+      }
+    } else {
+      // Local updates for guest or during auth transitions
+      setUser(prev => ({ ...prev, ...updates }));
     }
-  }, [user.history.length]);
+  };
 
-  const addToHistory = (animeId: string, episodeId: string) => {
+  const addToHistory = async (animeId: string, episodeId: string) => {
     const lastEntry = user.history[0];
     if (lastEntry?.animeId === animeId && lastEntry?.episodeId === episodeId) return;
 
     const newEntry = { animeId, episodeId, watchedAt: new Date().toISOString() };
-    setUser(prev => ({
-      ...prev,
-      history: [newEntry, ...prev.history]
-    }));
+    const newHistory = [newEntry, ...user.history];
+    const { level, points } = calculateProgress(newHistory.length);
+    
+    await syncToFirestore({
+      history: newHistory,
+      level,
+      points
+    });
   };
 
-  const toggleFavorite = (animeId: string) => {
-    setUser(prev => ({
-      ...prev,
-      favorites: prev.favorites.includes(animeId)
-        ? prev.favorites.filter(id => id !== animeId)
-        : [...prev.favorites, animeId]
-    }));
+  const toggleFavorite = async (animeId: string) => {
+    const newFavorites = user.favorites.includes(animeId)
+      ? user.favorites.filter(id => id !== animeId)
+      : [...user.favorites, animeId];
+    
+    await syncToFirestore({ favorites: newFavorites });
   };
 
-  const addAchievement = (achievement: Achievement) => {
+  const addAchievement = async (achievement: Achievement) => {
     if (user.achievements.find(a => a.id === achievement.id)) return;
-    setUser(prev => ({
-      ...prev,
-      achievements: [achievement, ...prev.achievements]
-    }));
+    const newAchievements = [achievement, ...user.achievements];
+    
+    await syncToFirestore({ achievements: newAchievements });
   };
 
-  const updateUser = (updates: Partial<User>) => {
-    setUser(prev => ({ ...prev, ...updates }));
+  const updateUser = async (updates: Partial<User>) => {
+    await syncToFirestore(updates);
   };
 
-  // Achievements check logic
+  // Achievements check logic (kept local for immediate feedback, but saves to Firestore)
   useEffect(() => {
-    const checkAchievements = () => {
+    if (!authUser || authUser.id === 'guest') return;
+
+    const checkAchievements = async () => {
       const history = user.history;
       const uniqueAnimes = new Set(history.map(h => h.animeId)).size;
       const totalEpisodes = history.length;
@@ -137,13 +136,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (uniqueAnimes >= 5) addPlaceholder('5', 'Ekspert', '5 xil animeni ko\'rdingiz', 'medal');
       if (user.level >= 5) addPlaceholder('6', 'Olovli', '5-darajaga yetdingiz', 'fire');
       if (user.favorites.length >= 5) addPlaceholder('7', 'Sodiq muxlis', '5 ta animeni sevimlilarga qo\'shdingiz', 'heart');
-      if (user.name !== 'Asadbek Developer' || user.avatar.includes('base64')) addPlaceholder('8', 'Master', 'Profilni yangiladingiz', 'lightning');
-
+      
       if (achievementsToUnlock.length > 0) {
-        setUser(prev => ({
-          ...prev,
-          achievements: [...achievementsToUnlock, ...prev.achievements]
-        }));
+        await syncToFirestore({
+          achievements: [...achievementsToUnlock, ...user.achievements]
+        });
       }
     };
 

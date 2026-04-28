@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAnime } from '../context/AnimeContext';
-import { Trophy, Flame, Timer, ChevronRight } from 'lucide-react';
+import { Trophy, Flame, Timer, ChevronRight, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -81,6 +81,10 @@ export default function TopTenRanking() {
                 <div className="flex items-center gap-3 mt-1">
                   <div className="text-[10px] font-bold text-yellow-500 flex items-center gap-1 bg-yellow-500/10 px-1.5 py-0.5 rounded-lg border border-yellow-500/10">
                     ★ {anime.rating.toFixed(1)}
+                  </div>
+                  <div className="text-[10px] font-bold text-gray-500 flex items-center gap-1 bg-white/5 px-1.5 py-0.5 rounded-lg border border-white/5">
+                    <Eye className="w-2.5 h-2.5" />
+                    {anime.views && anime.views >= 1000 ? (anime.views / 1000).toFixed(1) + 'k' : anime.views || 0}
                   </div>
                   <div className="text-[9px] font-bold text-gray-500 uppercase tracking-tighter">
                     {anime.type}

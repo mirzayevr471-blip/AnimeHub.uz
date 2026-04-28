@@ -1,0 +1,127 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile and activity data",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "avatar": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "user"] },
+        "isSuperAdmin": { "type": "boolean" },
+        "joinedAt": { "type": "string", "format": "date-time" },
+        "level": { "type": "integer" },
+        "points": { "type": "integer" },
+        "favorites": { "type": "array", "items": { "type": "string" } },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "animeId": { "type": "string" },
+              "episodeId": { "type": "string" },
+              "watchedAt": { "type": "string", "format": "date-time" }
+            }
+          }
+        },
+        "achievements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "title": { "type": "string" },
+              "description": { "type": "string" },
+              "iconType": { "type": "string" },
+              "unlockedAt": { "type": "string" }
+            }
+          }
+        }
+      },
+      "required": ["name", "email", "role", "joinedAt"]
+    },
+    "Anime": {
+      "title": "Anime",
+      "description": "Anime title information",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "image": { "type": "string" },
+        "rating": { "type": "number" },
+        "year": { "type": "integer" },
+        "type": { "type": "string" },
+        "status": { "type": "string" },
+        "genres": { "type": "array", "items": { "type": "string" } },
+        "description": { "type": "string" },
+        "views": { "type": "integer" },
+        "likes": { "type": "integer" }
+      },
+      "required": ["title", "image", "rating", "year", "type", "status", "genres"]
+    },
+    "Episode": {
+      "title": "Episode",
+      "description": "Episode of an anime",
+      "type": "object",
+      "properties": {
+        "number": { "type": "integer" },
+        "title": { "type": "string" },
+        "videoUrl": { "type": "string" },
+        "thumbnail": { "type": "string" },
+        "duration": { "type": "string" },
+        "addedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["number", "title", "videoUrl", "addedAt"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "User comment on an anime",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "userAvatar": { "type": "string" },
+        "text": { "type": "string" },
+        "likes": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "userName", "text", "createdAt"]
+    },
+    "Announcement": {
+      "title": "Announcement",
+      "description": "Site-wide announcement",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "link": { "type": "string" },
+        "type": { "type": "string", "enum": ["info", "warning", "success", "danger"] },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "message", "type", "isActive", "createdAt"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "Individual user profiles"
+    },
+    "animes/{animeId}": {
+      "schema": "Anime",
+      "description": "Anime library"
+    },
+    "animes/{animeId}/episodes/{episodeId}": {
+      "schema": "Episode",
+      "description": "Episodes for each anime"
+    },
+    "animes/{animeId}/comments/{commentId}": {
+      "schema": "Comment",
+      "description": "User comments for each anime"
+    },
+    "announcements/{announcementId}": {
+      "schema": "Announcement",
+      "description": "System announcements"
+    }
+  }
+}

@@ -20,6 +20,19 @@ export interface Anime {
   episodesList?: Episode[];
   genres: string[];
   description?: string;
+  views?: number;
+  likes?: number;
+}
+
+export interface Comment {
+  id: string;
+  userId: string;
+  userName: string;
+  userAvatar: string;
+  text: string;
+  likes: number;
+  createdAt: any;
+  time?: string;
 }
 
 export interface User {

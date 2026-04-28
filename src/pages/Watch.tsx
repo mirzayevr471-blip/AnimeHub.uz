@@ -1,6 +1,6 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useAnime } from '../context/AnimeContext';
+import { useAnime, useEpisodes } from '../context/AnimeContext';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { 
@@ -23,80 +23,128 @@ import {
   Send
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Episode } from '../types';
+import { Episode, Comment as AnimeComment } from '../types';
 import { useUser } from '../context/UserContext';
+import { useAuth } from '../context/AuthContext';
 import { getVideoEmbedUrl } from '../utils';
+import { db } from '../lib/firebase';
+import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, increment } from 'firebase/firestore';
+import { handleFirestoreError } from '../lib/firestoreUtils';
 
 export default function Watch() {
   const { animeId } = useParams();
-  const { animes, updateAnime } = useAnime();
+  const { user } = useAuth();
+  const { animes, updateAnime, incrementViews } = useAnime();
+  const { episodes, loading: episodesLoading } = useEpisodes(animeId);
   const { addToHistory } = useUser();
   const [activeEpisode, setActiveEpisode] = useState<Episode | null>(null);
   const [isCinemaMode, setIsCinemaMode] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(0); // Set initial likes to 0
   const [showRatingModal, setShowRatingModal] = useState(false);
-  const [userRating, setUserRating] = useState<number | null>(0); // Initial user rating set to 0
+  const [userRating, setUserRating] = useState<number | null>(0); 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' } | null>(null);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [commentText, setCommentText] = useState('');
-  const [comments, setComments] = useState([
-    { id: '1', userName: 'Azizbek', text: 'Juda ajoyib anime! Keyingi qismlarini kutib qolamiz.', time: '2 soat oldin', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aziz', likes: 12, isLiked: false },
-    { id: '2', userName: 'Malika', text: 'Grafikasi daxshat ekan, menga juda yoqdi.', time: '5 soat oldin', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Malika', likes: 8, isLiked: false },
-  ]);
+  const viewCounted = useRef<string | null>(null);
+  const [comments, setComments] = useState<AnimeComment[]>([]);
 
   const anime = useMemo(() => animes.find(a => a.id === animeId), [animes, animeId]);
+  const likesCount = anime?.likes || 0;
 
   const showToast = (message: string, type: 'success' | 'info' = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
   };
 
-  const handleCommentLike = (id: string) => {
-    setComments(prev => prev.map(comment => {
-      if (comment.id === id) {
+  useEffect(() => {
+    if (!animeId) return;
+
+    const q = query(collection(db, 'animes', animeId, 'comments'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const comms = snapshot.docs.map(doc => {
+        const data = doc.data();
+        const createdAtDate = data.createdAt?.toDate();
+        let time = 'Hozirgina';
+        if (createdAtDate) {
+          const diffInHours = Math.floor((createdAtDate.getTime() - new Date().getTime()) / 1000 / 60 / 60);
+          if (diffInHours < 0) {
+             time = new Intl.RelativeTimeFormat('uz').format(diffInHours, 'hour');
+          }
+        }
         return {
-          ...comment,
-          likes: comment.isLiked ? comment.likes - 1 : comment.likes + 1,
-          isLiked: !comment.isLiked
+          id: doc.id,
+          ...data,
+          time
         };
-      }
-      return comment;
-    }));
+      });
+      setComments(comms);
+    });
+
+    return () => unsubscribe();
+  }, [animeId]);
+
+  const handleCommentLike = async (id: string) => {
+    if (!user) {
+      showToast("Iltimos, avval ro'yxatdan o'ting", 'info');
+      return;
+    }
+
+    try {
+      const commentRef = doc(db, 'animes', animeId!, 'comments', id);
+      await updateDoc(commentRef, {
+        likes: increment(1)
+      });
+    } catch (error) {
+      handleFirestoreError(error, 'update', `animes/${animeId}/comments/${id}`);
+    }
   };
 
-  const handleCommentSubmit = (e: React.FormEvent) => {
+  const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!commentText.trim()) {
       showToast("Iltimos, fikringizni yozing", 'info');
       return;
     }
 
-    const newComment = {
-      id: Date.now().toString(),
-      userName: 'Siz', // In real app, get from AuthContext
-      text: commentText,
-      time: 'Hozirgina',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Siz',
-      likes: 0,
-      isLiked: false
-    };
+    if (!user) {
+      showToast("Iltimos, avval ro'yxatdan o'ting", 'info');
+      return;
+    }
 
-    setComments([newComment, ...comments]);
-    setCommentText('');
-    showToast("Fikringiz muvaffaqiyatli yuborildi!");
+    try {
+      await addDoc(collection(db, 'animes', animeId!, 'comments'), {
+        userId: user.uid,
+        userName: user.displayName || 'Foydalanuvchi',
+        userAvatar: user.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`,
+        text: commentText,
+        likes: 0,
+        createdAt: serverTimestamp()
+      });
+
+      setCommentText('');
+      showToast("Fikringiz muvaffaqiyatli yuborildi!");
+    } catch (error) {
+      handleFirestoreError(error, 'create', `animes/${animeId}/comments`);
+    }
   };
 
-  const handleLike = () => {
-    if (isLiked) {
-      setLikesCount(prev => prev - 1);
-      showToast("Yoqdi bekor qilindi", 'info');
-    } else {
-      setLikesCount(prev => prev + 1);
-      showToast("Sizga yoqdi!");
+  const handleLike = async () => {
+    if (!user) {
+      showToast("Iltimos, avval ro'yxatdan o'ting", 'info');
+      return;
     }
-    setIsLiked(!isLiked);
+
+    try {
+      const animeRef = doc(db, 'animes', animeId!);
+      await updateDoc(animeRef, {
+        likes: increment(isLiked ? -1 : 1)
+      });
+      setIsLiked(!isLiked);
+      showToast(isLiked ? "Yoqdi bekor qilindi" : "Sizga yoqdi!");
+    } catch (error) {
+      handleFirestoreError(error, 'update', `animes/${animeId}`);
+    }
   };
 
   const handleRatingSubmit = (rating: number) => {
@@ -141,10 +189,17 @@ export default function Watch() {
   };
 
   useEffect(() => {
-    if (anime && anime.episodesList && anime.episodesList.length > 0 && !activeEpisode) {
-      setActiveEpisode(anime.episodesList[0]);
+    if (anime?.id && viewCounted.current !== anime.id) {
+      incrementViews(anime.id);
+      viewCounted.current = anime.id;
     }
-  }, [anime, activeEpisode]);
+  }, [anime?.id, incrementViews]);
+
+  useEffect(() => {
+    if (episodes && episodes.length > 0 && !activeEpisode) {
+      setActiveEpisode(episodes[0]);
+    }
+  }, [episodes, activeEpisode]);
 
   useEffect(() => {
     if (anime && activeEpisode) {
@@ -397,6 +452,16 @@ export default function Watch() {
                     {isLiked ? 'Sizga yoqdi' : 'Yoqdi degunlar'}
                   </span>
                 </motion.button>
+
+                <div className="flex-1 bg-white/5 border border-white/5 p-6 rounded-[32px] flex flex-col items-center justify-center gap-2 transition-all group">
+                  <div className="flex items-center gap-2 text-white">
+                    <Eye className="w-8 h-8 text-gray-500 group-hover:text-blue-500 transition-colors" />
+                    <span className="text-4xl font-black text-white">
+                      {anime.views && anime.views >= 1000 ? (anime.views / 1000).toFixed(1) + 'k' : anime.views || 0}
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Jami ko'rishlar</span>
+                </div>
               </div>
 
               {/* Anime & Episode Info */}
@@ -543,7 +608,7 @@ export default function Watch() {
                         className="flex gap-4 group"
                       >
                         <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 border border-white/10">
-                          <img src={comment.avatar} alt={comment.userName} className="w-full h-full object-cover" />
+                          <img src={comment.userAvatar} alt={comment.userName} className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1 bg-white/[0.02] border border-white/5 p-4 rounded-2xl hover:bg-white/5 transition-all">
                           <div className="flex items-center justify-between mb-2">
@@ -583,14 +648,14 @@ export default function Watch() {
                         Epizodlar
                       </h3>
                       <span className="text-[10px] font-black bg-blue-600/10 text-blue-400 px-3 py-1 rounded-full border border-blue-500/10 tracking-widest">
-                        {anime.episodesList?.length || 0} QISM
+                        {episodes?.length || 0} QISM
                       </span>
                     </div>
                   </div>
                   
                   <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
-                    {anime.episodesList && anime.episodesList.length > 0 ? (
-                      anime.episodesList.map((ep) => (
+                    {episodes && episodes.length > 0 ? (
+                      episodes.map((ep) => (
                         <button
                           key={ep.id}
                           onClick={() => setActiveEpisode(ep)}
